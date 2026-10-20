@@ -9,7 +9,7 @@ Setiap langkah menunjukkan **file tujuan → lokasi kode → tujuan langkah → 
 Tidak perlu mengunduh source, menjalankan npm, atau login GitHub untuk memakai ekstensi.
 
 1. Buka [rilis terbaru](https://github.com/lordbarry21/panduan-serkom/releases/latest).
-2. Pada bagian **Assets**, unduh file **panduan-serkom-1.1.0.vsix**.
+2. Pada bagian **Assets**, unduh file **panduan-serkom-1.2.0.vsix**.
 3. Buka **Visual Studio Code** versi **1.96 atau lebih baru**.
 4. Tekan **Ctrl+Shift+P**, cari **Extensions: Install from VSIX…**.
 5. Pilih file `.vsix` yang diunduh, lalu tunggu pemasangan selesai. VS Code mungkin meminta konfirmasi kepercayaan terhadap publisher lokal.
@@ -19,7 +19,7 @@ Tidak perlu mengunduh source, menjalankan npm, atau login GitHub untuk memakai e
 Alternatif lewat terminal:
 
 ```powershell
-code --install-extension .\panduan-serkom-1.1.0.vsix
+code --install-extension .\panduan-serkom-1.2.0.vsix
 ```
 
 Ini ekstensi untuk **VS Code**, bukan Visual Studio. Paket ini didistribusikan melalui GitHub Releases dan belum diterbitkan di Visual Studio Marketplace.
@@ -48,6 +48,25 @@ Seluruh materi sudah dibundel, sehingga ekstensi berjalan lokal tanpa API key, s
 Untuk route dan penyamaan model, seleksi sendiri blok lama yang hendak diganti sebelum membuka pratinjau. Untuk penambahan di lokasi pilihanmu sendiri, salin kode dan tempel langsung. Ekstensi menolak penempatan otomatis ketika struktur file tidak jelas atau method/properti yang sama sudah ada.
 
 Pada langkah terminal, tekan **Salin command**, buka terminal proyek, lalu tempel dan jalankan sendiri. **Buka terminal proyek** tidak menjalankan command otomatis.
+
+## Bonus kisi-kisi
+
+Pilih tab **Bonus kisi-kisi** di atas panel. Materi bonus berisi **12 bab** yang terpisah dari 55 langkah utama:
+
+| Jalur | Cakupan |
+| --- | --- |
+| Teori (4 bab) | Tools proyek, ERD/database, CRUD MySQL dan contoh INSERT/SELECT/UPDATE/DELETE, pengertian/manfaat query |
+| Latihan (8 bab) | Login/register, role, Gate untuk admin/user, CRUD food, controller dan view CRUD user, filter kategori/periode, rekap order |
+
+Tiap bab memuat petunjuk, contoh kode dengan lokasi penerapan, penjelasan, checklist, dan tanya jawab pada topik terkait. **Salin contoh bonus** menyalin contoh yang dipilih; **Buka contoh di editor** menampilkan salinan hanya-baca. Bonus tidak menyisipkan atau menjalankan kode otomatis.
+
+Progres bonus disimpan terpisah; berpindah tab tidak memindahkan posisi materi utama. **Lihat alur** menampilkan daftar bab untuk jalur yang aktif. Semua teori dan contoh juga ada di [bonus-kisi-kisi.md](data/bonus-kisi-kisi.md) dan dibundel agar bisa dibaca offline.
+
+Contoh bonus adalah materi tambahan, **bukan salinan kode dari .md asli**. File `pesanmakan.md` dan seluruh 55 potongan aslinya tetap sama. Filter periode menu memakai tanggal menu dibuat, sementara laporan penjualan memakai tanggal pesanan. Rekap omzet dihitung dari orders langsung agar total satu pesanan tidak terhitung berkali-kali setelah JOIN detail.
+
+Contoh PHP bonus sudah diperiksa sintaksnya; query filter/rekap diperiksa menggunakan fixture SQLite yang kompatibel dengan contoh SQL tersebut. Ini belum merupakan pengujian aplikasi Laravel/MySQL end-to-end. Prasyarat tiap latihan, terutama role/Gate, harus dikerjakan berurutan pada proyek latihan.
+
+![Bonus kisi-kisi](docs/bonus-kisi-kisi.png)
 
 ## Filter modul di Lihat alur
 

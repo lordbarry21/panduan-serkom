@@ -1,0 +1,625 @@
+[
+  {
+    "id": "bonus-tools",
+    "index": 0,
+    "module": "bonus",
+    "group": "Teori",
+    "step": 1,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Tools untuk membuat proyek",
+    "summary": "Kenali alatnya dan jelaskan fungsi masing-masing dengan satu kalimat.",
+    "blocks": [
+      {
+        "heading": "Alat dan perannya",
+        "items": [
+          "VS Code: editor untuk menulis kode, membuka folder, dan memakai terminal. VS Code bukan server database.",
+          "PHP: bahasa/runtime yang menjalankan backend Laravel.",
+          "Composer: pengelola dependensi PHP dan alat untuk membuat proyek Laravel.",
+          "Laravel: framework PHP yang menyediakan routing, controller, model, migration, validasi, dan autentikasi.",
+          "MySQL: sistem pengelola database. phpMyAdmin adalah antarmuka untuk mengelolanya; keduanya berbeda.",
+          "Node.js dan npm: menjalankan tooling frontend serta mengelola dependensinya; Vite menyiapkan aset CSS/JavaScript.",
+          "Browser: membuka halaman dan menguji interaksi. Terminal: menjalankan perintah.",
+          "Git dan GitHub: mencatat riwayat perubahan serta menyimpan/berbagi repository. Keduanya tidak wajib agar Laravel bisa berjalan lokal.",
+          "Laragon atau XAMPP (opsional): paket yang membantu menyediakan PHP, server web, dan database. Pilih sesuai komputer, tidak harus memasang semuanya."
+        ]
+      },
+      {
+        "heading": "Cek alat yang tersedia",
+        "language": "shellscript",
+        "target": "Terminal",
+        "code": "php --version\ncomposer --version\nnode --version\nnpm --version",
+        "explanation": "Perintah ini menampilkan versi. MySQL juga harus berjalan; cek dari aplikasi/service database yang dipakai."
+      },
+      {
+        "heading": "Saat diminta menjelaskan",
+        "text": "Saya menulis kode memakai VS Code, menjalankan Laravel dengan PHP, mengelola paket PHP dengan Composer, menyimpan data di MySQL, dan menyiapkan aset frontend memakai npm/Vite."
+      }
+    ],
+    "checklist": [
+      "Bisa membedakan editor, bahasa, framework, dan database.",
+      "Bisa menyebut fungsi Composer dan npm.",
+      "Bisa menunjukkan cara menjalankan proyek yang sudah disiapkan."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-erd",
+    "index": 1,
+    "module": "bonus",
+    "group": "Teori",
+    "step": 2,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Fungsi ERD dan database",
+    "summary": "ERD adalah peta hubungan data; database menyimpan dan mengelola data sebenarnya.",
+    "blocks": [
+      {
+        "heading": "Istilah yang perlu dipahami",
+        "text": "Tabel menyimpan satu jenis data. Kolom adalah atribut, baris adalah satu record. Primary key membedakan tiap record. Foreign key menghubungkan record ke tabel lain. ERD membantu merancang hubungan dan mengurangi pengulangan data sebelum kode dibuat."
+      },
+      {
+        "heading": "Hubungan dari materi utama",
+        "language": "plaintext",
+        "target": "Sketsa ERD",
+        "code": "foods (id)   1 ─── N order_details (food_id)\norders (id)  1 ─── N order_details (order_id)\n\nusers: akun untuk login/register",
+        "explanation": "Satu pesanan mempunyai banyak detail. Satu makanan dapat muncul di banyak detail pesanan. order_details menjadi penghubung orders dan foods."
+      },
+      {
+        "heading": "Contoh yang mudah dibayangkan",
+        "text": "Pesanan nomor 10 berisi dua bakso dan satu es teh. Tabel orders menyimpan identitas/total pesanan, sementara order_details menyimpan dua baris item beserta jumlahnya. Nama makanan dibaca dari foods lewat food_id."
+      },
+      {
+        "heading": "Batas materi asli",
+        "text": "Pada .md asli, orders belum mempunyai user_id. Nama pelanggan disimpan sebagai teks, jadi jangan menyebut orders sudah terhubung ke users melalui foreign key. Relasi user-pesanan memerlukan penambahan kolom dan aturan baru di luar materi asli."
+      }
+    ],
+    "checklist": [
+      "Bisa menggambar dua hubungan 1 ke banyak di atas.",
+      "Bisa menjelaskan mengapa pesanan perlu tabel detail.",
+      "Bisa menunjuk primary key dan foreign key."
+    ],
+    "qa": [
+      {
+        "q": "Apa fungsi ERD?",
+        "a": "Merencanakan entitas, atribut, dan hubungan data agar struktur database jelas sebelum implementasi."
+      },
+      {
+        "q": "Kenapa detail pesanan tidak ditaruh dalam satu teks panjang?",
+        "a": "Agar tiap makanan dan jumlahnya dapat dicari, dihitung, serta dihubungkan dengan tabel makanan."
+      }
+    ]
+  },
+  {
+    "id": "bonus-crud-sql",
+    "index": 2,
+    "module": "bonus",
+    "group": "Teori",
+    "step": 3,
+    "part": 1,
+    "mode": "bonus",
+    "title": "CRUD MySQL: tambah, lihat, edit, hapus",
+    "summary": "CRUD adalah empat operasi dasar data. MySQL menjalankan perintah SQL untuk operasi tersebut.",
+    "blocks": [
+      {
+        "heading": "Pasangan yang harus hafal",
+        "items": [
+          "Create / tambah → INSERT.",
+          "Read / tampilkan → SELECT.",
+          "Update / edit → UPDATE.",
+          "Delete / hapus → DELETE."
+        ]
+      },
+      {
+        "heading": "Tempat mencoba",
+        "text": "Jalankan contoh ini pada database latihan yang sudah memiliki tabel foods dari materi utama, lewat SQL editor/phpMyAdmin atau client MySQL. Ini SQL, bukan command terminal PHP. Jalankan blok secara berurutan dalam sesi koneksi yang sama."
+      },
+      {
+        "heading": "1. Tambah satu menu latihan",
+        "language": "sql",
+        "target": "SQL editor MySQL · database latihan",
+        "code": "INSERT INTO foods (name, category, price, description, image, created_at, updated_at)\nVALUES ('Menu Latihan Bonus', 'Makanan', 12000, 'Data untuk latihan CRUD.', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);\n\nSET @food_id = LAST_INSERT_ID();",
+        "explanation": "INSERT membuat record. LAST_INSERT_ID mengambil ID record baru pada koneksi ini; @food_id menyimpannya agar contoh edit/hapus tidak menyentuh menu lain."
+      },
+      {
+        "heading": "2. Tampilkan menu yang baru dibuat",
+        "language": "sql",
+        "target": "SQL editor MySQL · koneksi yang sama",
+        "code": "SELECT id, name, category, price\nFROM foods\nWHERE id = @food_id;",
+        "explanation": "SELECT memilih kolom. FROM menyebut tabel. WHERE membatasi record yang ditampilkan."
+      },
+      {
+        "heading": "3. Ubah harga menu latihan",
+        "language": "sql",
+        "target": "SQL editor MySQL · koneksi yang sama",
+        "code": "UPDATE foods\nSET price = 15000, updated_at = CURRENT_TIMESTAMP\nWHERE id = @food_id;",
+        "explanation": "SET menetapkan nilai baru. WHERE memastikan hanya record latihan yang berubah."
+      },
+      {
+        "heading": "4. Hapus menu latihan",
+        "language": "sql",
+        "target": "SQL editor MySQL · koneksi yang sama",
+        "code": "DELETE FROM foods\nWHERE id = @food_id;",
+        "explanation": "DELETE menghapus record. Menghilangkan WHERE pada UPDATE/DELETE dapat mengubah atau menghapus semua record tabel."
+      }
+    ],
+    "checklist": [
+      "Bisa menyebut keempat perintah tanpa melihat catatan.",
+      "Bisa menampilkan data sesudah INSERT dan UPDATE.",
+      "Bisa menjelaskan kegunaan WHERE sebelum menjalankan DELETE."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-query",
+    "index": 3,
+    "module": "bonus",
+    "group": "Teori",
+    "step": 4,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Apa itu query dan manfaatnya?",
+    "summary": "Query adalah permintaan/perintah yang dikirim ke database untuk membaca atau mengubah data.",
+    "blocks": [
+      {
+        "heading": "Jawaban singkat untuk ujian",
+        "text": "Query dipakai untuk meminta data tertentu atau mengolahnya. Dengan query, kita bisa menambah data, menyaring kategori, mengurutkan harga, mencari pesanan dalam rentang waktu, dan membuat rekap tanpa menghitung manual."
+      },
+      {
+        "heading": "Minta tiga makanan termurah",
+        "language": "sql",
+        "target": "SQL editor MySQL",
+        "code": "SELECT id, name, price\nFROM foods\nWHERE category = 'Makanan'\nORDER BY price ASC, id ASC\nLIMIT 3;",
+        "explanation": "WHERE menyaring kategori, ORDER BY mengurutkan, ASC berarti naik dari nilai kecil, dan LIMIT membatasi banyak hasil."
+      },
+      {
+        "heading": "Hitung jumlah menu per kategori",
+        "language": "sql",
+        "target": "SQL editor MySQL",
+        "code": "SELECT category, COUNT(*) AS total_menu\nFROM foods\nGROUP BY category\nORDER BY category;",
+        "explanation": "COUNT menghitung baris. GROUP BY mengelompokkan baris berdasarkan kategori. AS memberi nama kolom hasil agar mudah dibaca."
+      },
+      {
+        "heading": "SQL dengan Eloquent",
+        "text": "Food::all() pada Laravel juga membaca database. Eloquent menerjemahkan pemanggilan model/query builder menjadi SQL. Saat memakai input pengguna, gunakan binding/parameter atau query builder; jangan gabungkan input mentah ke string SQL."
+      }
+    ],
+    "checklist": [
+      "Bisa membedakan WHERE, ORDER BY, GROUP BY, dan LIMIT.",
+      "Bisa membaca hasil query dan menjelaskan artinya."
+    ],
+    "qa": [
+      {
+        "q": "Apakah query cuma SELECT?",
+        "a": "Tidak. Istilah query sering dipakai untuk permintaan database; perintah tambah, ubah, dan hapus juga dikirim ke database. SELECT adalah contoh query pembacaan."
+      }
+    ]
+  },
+  {
+    "id": "bonus-login",
+    "index": 4,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 5,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Login dan register admin/user",
+    "summary": "Mulai dari autentikasi Breeze yang sudah dipakai materi utama, lalu bedakan login dan hak akses.",
+    "blocks": [
+      {
+        "heading": "Alur yang dikerjakan",
+        "items": [
+          "Ikuti modul 2 langkah 1–3 untuk pemasangan Breeze pada proyek latihan yang sudah siap.",
+          "Buka /register. Buat akun user dengan nama, email unik, password, dan konfirmasi password.",
+          "Keluar, lalu masuk lagi lewat /login dengan akun tadi.",
+          "Akun admin memakai login yang sama. Perbedaan hak akses dibuat lewat role dan pemeriksaan server pada dua bonus berikutnya."
+        ]
+      },
+      {
+        "heading": "Authentication dan authorization",
+        "text": "Authentication memastikan siapa yang login. Authorization menentukan apa yang boleh dilakukan oleh akun itu. Login berhasil tidak otomatis berarti akun adalah admin."
+      },
+      {
+        "heading": "Password dan form",
+        "text": "Hash::make menyimpan hash password. Input konfirmasi harus cocok dengan password. @csrf membantu memvalidasi kiriman form. Jangan menyimpan password sebagai teks asli dan jangan menyediakan pilihan menjadi admin pada register publik."
+      },
+      {
+        "heading": "Hal yang belum tercakup otomatis",
+        "text": "Materi utama sudah memasang login/register, tetapi belum membedakan role admin dan user. Menyembunyikan tombol admin saja tidak cukup; URL admin harus dibatasi dari server."
+      }
+    ],
+    "checklist": [
+      "Register user baru berhasil.",
+      "Email yang sama ditolak saat register lagi.",
+      "Login dengan password salah ditolak.",
+      "Logout membuat halaman yang butuh login tidak bisa diakses langsung."
+    ],
+    "qa": [
+      {
+        "q": "Kenapa user biasa tidak boleh memilih role admin saat register?",
+        "a": "Karena pengguna dapat menaikkan hak aksesnya sendiri. Akun publik harus mendapat role user dari server."
+      }
+    ]
+  },
+  {
+    "id": "bonus-role",
+    "index": 5,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 6,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Tambahkan role di proyek latihan",
+    "summary": "Tambahan bonus ini memperkenalkan role. Kode materi utama di ekstensi tetap asli.",
+    "blocks": [
+      {
+        "heading": "Buat migration tambahan",
+        "language": "shellscript",
+        "target": "Terminal proyek latihan",
+        "code": "php artisan make:migration add_role_to_users_table --table=users",
+        "explanation": "Jangan mengedit migration lama yang sudah dijalankan. Command menghasilkan satu file migration baru."
+      },
+      {
+        "heading": "Isi file migration baru",
+        "language": "php",
+        "target": "database/migrations/..._add_role_to_users_table.php · ganti seluruh isi file baru",
+        "code": "<?php\n\nuse Illuminate\\Database\\Migrations\\Migration;\nuse Illuminate\\Database\\Schema\\Blueprint;\nuse Illuminate\\Support\\Facades\\Schema;\n\nreturn new class extends Migration\n{\n    public function up(): void\n    {\n        Schema::table('users', function (Blueprint $table) {\n            $table->string('role')->default('user');\n        });\n    }\n\n    public function down(): void\n    {\n        Schema::table('users', function (Blueprint $table) {\n            $table->dropColumn('role');\n        });\n    }\n};",
+        "explanation": "Default user membuat akun baru mendapatkan hak biasa. Jangan tambahkan kolom ini lagi jika proyek sudah punya role."
+      },
+      {
+        "heading": "Terapkan migration",
+        "language": "shellscript",
+        "target": "Terminal proyek latihan",
+        "code": "php artisan migrate",
+        "explanation": "Ini menerapkan migration yang belum dijalankan, bukan migrate:fresh yang menghapus seluruh tabel."
+      },
+      {
+        "heading": "Buka Tinker",
+        "language": "shellscript",
+        "target": "Terminal proyek latihan",
+        "code": "php artisan tinker",
+        "explanation": "Tinker adalah console PHP Laravel. Ketik blok berikut di dalam Tinker, bukan di SQL editor."
+      },
+      {
+        "heading": "Tetapkan akun admin dari seeder",
+        "language": "php",
+        "target": "Tinker · jalankan baris demi baris",
+        "code": "$admin = App\\Models\\User::where('email', 'admin@gmail.com')->firstOrFail();\n$admin->role = 'admin';\n$admin->save();",
+        "explanation": "Gunakan akun admin latihan dari seeder materi utama. Jika email berbeda, sesuaikan email pencarian. Role ditetapkan dari lingkungan pengelola, bukan dari register publik."
+      }
+    ],
+    "checklist": [
+      "Kolom users.role ada tepat sekali.",
+      "Akun register baru mempunyai role user.",
+      "Akun admin latihan mempunyai role admin.",
+      "Keluar dari Tinker sebelum menjalankan command terminal lain."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-gate",
+    "index": 6,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 7,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Batasi halaman admin dari server",
+    "summary": "Buat aturan admin sekali, lalu terapkan pada route yang hanya boleh diakses admin.",
+    "blocks": [
+      {
+        "heading": "Import yang diperlukan",
+        "language": "php",
+        "target": "app/Providers/AppServiceProvider.php · bagian use di atas class",
+        "code": "use App\\Models\\User;\nuse Illuminate\\Support\\Facades\\Gate;",
+        "explanation": "Tambahkan hanya import yang belum ada. Jangan mendeklarasikan alias yang sama dua kali."
+      },
+      {
+        "heading": "Daftarkan aturan",
+        "language": "php",
+        "target": "app/Providers/AppServiceProvider.php · di dalam method boot()",
+        "code": "Gate::define('manage-admin', fn (User $user): bool => $user->role === 'admin');",
+        "explanation": "Gate mengembalikan true hanya untuk akun ber-role admin. Ini aturan authorization yang diperiksa di server."
+      },
+      {
+        "heading": "Dashboard memerlukan role admin",
+        "language": "php",
+        "target": "routes/web.php · GANTI route /dashboard yang lama, jangan tambah route kedua",
+        "code": "Route::get('/dashboard', [OrderController::class, 'adminDashboard'])\n    ->middleware(['auth', 'can:manage-admin'])\n    ->name('dashboard');",
+        "explanation": "Materi contoh ini memakai auth dan Gate; bila proyek memang menerapkan verifikasi email, pertahankan middleware verified sesuai kebijakannya."
+      },
+      {
+        "heading": "Lindungi route admin lainnya",
+        "text": "Pada group admin yang sudah ada, ganti middleware menjadi auth dan can:manage-admin. Pindahkan route /admin/dashboard, /admin/orders/.../status, serta resource /admin/foods ke group tersebut. Jangan mendaftarkannya dua kali di dalam dan di luar group. Route profile tetap boleh diakses user yang login."
+      },
+      {
+        "heading": "Contoh group yang membatasi admin",
+        "language": "php",
+        "target": "routes/web.php · gunakan sebagai pembungkus route admin yang dipindahkan",
+        "code": "Route::middleware(['auth', 'can:manage-admin'])->group(function () {\n    Route::get('/admin/dashboard', [OrderController::class, 'adminDashboard'])->name('admin.dashboard');\n    Route::patch('/admin/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');\n    Route::resource('/admin/foods', FoodController::class);\n});",
+        "explanation": "Pemeriksaan ini berlaku juga ketika user mengetik URL secara langsung. Controller/route utama tidak otomatis diamankan hanya karena menu navigasi disembunyikan."
+      },
+      {
+        "heading": "Sesudah user register/login",
+        "text": "Breeze dapat mengarahkan user ke /dashboard. Setelah route itu dibatasi admin, user biasa akan mendapat 403. Untuk latihan, ubah redirect sukses di controller login/register agar admin menuju dashboard dan user menuju route customer.index; autentikasi dan validasi yang sudah ada tetap dipertahankan."
+      },
+      {
+        "heading": "Arah redirect untuk tiap role",
+        "language": "php",
+        "target": "app/Http/Controllers/Auth/AuthenticatedSessionController.php dan RegisteredUserController.php · ganti return redirect sukses pada store()",
+        "code": "return redirect()->route($request->user()->role === 'admin' ? 'dashboard' : 'customer.index');",
+        "explanation": "Pada controller register, letakkan return ini setelah akun dibuat dan Auth::login($user) yang sudah disediakan Breeze. Jangan menghapus validasi atau proses login aslinya."
+      }
+    ],
+    "checklist": [
+      "Admin bisa membuka /dashboard dan /admin/foods.",
+      "User biasa mendapat 403 ketika membuka URL admin langsung.",
+      "Pengunjung belum login diarahkan ke login.",
+      "User biasa setelah login/register diarahkan ke katalog."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-crud-food",
+    "index": 7,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 8,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Latihan CRUD food dari modul utama",
+    "summary": "Gunakan implementasi lengkap yang sudah ada, lalu buktikan setiap operasi melalui browser.",
+    "blocks": [
+      {
+        "heading": "Urutan berkas",
+        "items": [
+          "Model/migration/seeder: modul 1.",
+          "FoodController dan validasi: modul 2 step 4.",
+          "View daftar/tambah/edit: modul 2 step 5.",
+          "Route resource foods: modul 4 step 2; untuk latihan role, letakkan di group admin pada bonus sebelumnya."
+        ]
+      },
+      {
+        "heading": "Pemetaan tombol ke kode",
+        "items": [
+          "Daftar → GET /admin/foods → index() → Read.",
+          "Form tambah → create(); kirim form → store() → Create.",
+          "Form edit → edit(); simpan perubahan → update() → Update.",
+          "Tombol hapus → destroy() → Delete."
+        ]
+      },
+      {
+        "heading": "Perhatikan upload",
+        "text": "storage:link menghubungkan file gambar ke folder public. Form upload perlu multipart/form-data. File gambar tidak otomatis terhapus hanya karena baris database dihapus; materi FoodController menangani file lama."
+      },
+      {
+        "heading": "Tanda sudah memahami",
+        "text": "Bisa menjelaskan perjalanan input dari form, validasi controller, penyimpanan model, sampai daftar diperbarui. Jangan hanya menghafal nama tombol."
+      }
+    ],
+    "checklist": [
+      "Tambah Menu Bonus dengan harga 12000.",
+      "Cari menu itu di daftar setelah refresh.",
+      "Edit menjadi 15000; refresh dan pastikan nilai tersimpan.",
+      "Coba harga negatif; harus ditolak validasi.",
+      "Hapus hanya menu latihan tersebut.",
+      "Coba URL CRUD sebagai user biasa; akses admin harus ditolak."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-crud-user-controller",
+    "index": 8,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 9,
+    "part": 1,
+    "mode": "bonus",
+    "title": "CRUD user: controller dan route",
+    "summary": "Contoh tambahan untuk admin mengelola akun user biasa. Prasyarat: role dan Gate dari bonus sebelumnya.",
+    "blocks": [
+      {
+        "heading": "Buat controller resource",
+        "language": "shellscript",
+        "target": "Terminal proyek latihan",
+        "code": "php artisan make:controller Admin/UserController --resource --model=User",
+        "explanation": "Controller baru diletakkan pada namespace Admin. Tidak perlu membuat model User kedua."
+      },
+      {
+        "heading": "Isi controller user",
+        "language": "php",
+        "target": "app/Http/Controllers/Admin/UserController.php · ganti seluruh isi file baru",
+        "code": "<?php\n\nnamespace App\\Http\\Controllers\\Admin;\n\nuse App\\Http\\Controllers\\Controller;\nuse App\\Models\\User;\nuse Illuminate\\Http\\Request;\nuse Illuminate\\Support\\Facades\\Hash;\nuse Illuminate\\Validation\\Rule;\n\nclass UserController extends Controller\n{\n    public function index()\n    {\n        $users = User::latest()->paginate(10);\n        return view('admin.users.index', compact('users'));\n    }\n\n    public function create()\n    {\n        return view('admin.users.create');\n    }\n\n    public function store(Request $request)\n    {\n        $data = $request->validate([\n            'name' => 'required|string|max:255',\n            'email' => 'required|email|max:255|unique:users,email',\n            'password' => 'required|string|min:8|confirmed',\n        ]);\n\n        $user = new User();\n        $user->name = $data['name'];\n        $user->email = $data['email'];\n        $user->password = Hash::make($data['password']);\n        $user->role = 'user';\n        $user->save();\n\n        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');\n    }\n\n    public function edit(User $user)\n    {\n        abort_if($user->role === 'admin', 403, 'Latihan ini hanya mengelola akun user biasa.');\n        return view('admin.users.edit', compact('user'));\n    }\n\n    public function update(Request $request, User $user)\n    {\n        abort_if($user->role === 'admin', 403, 'Akun admin tidak diubah lewat latihan ini.');\n\n        $data = $request->validate([\n            'name' => 'required|string|max:255',\n            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],\n            'password' => 'nullable|string|min:8|confirmed',\n        ]);\n\n        $user->name = $data['name'];\n        $user->email = $data['email'];\n        if ($request->filled('password')) {\n            $user->password = Hash::make($data['password']);\n        }\n        $user->save();\n\n        return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui.');\n    }\n\n    public function destroy(Request $request, User $user)\n    {\n        abort_if($request->user()->is($user), 422, 'Tidak boleh menghapus akun sendiri.');\n        abort_if($user->role === 'admin', 403, 'Akun admin tidak dihapus lewat latihan ini.');\n        $user->delete();\n\n        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');\n    }\n}",
+        "explanation": "Hash menjaga password tidak tersimpan sebagai teks asli. confirmed memeriksa password_confirmation. Rule::unique(...)->ignore($user->id) mengecualikan record yang sedang diedit, bukan mengizinkan email milik akun lain. Role dipaksa user oleh server."
+      },
+      {
+        "heading": "Import controller pada route",
+        "language": "php",
+        "target": "routes/web.php · tambahkan di bagian use jika belum ada",
+        "code": "use App\\Http\\Controllers\\Admin\\UserController;",
+        "explanation": "Nama UserController ini digunakan untuk route resource berikut."
+      },
+      {
+        "heading": "Daftarkan route user",
+        "language": "php",
+        "target": "routes/web.php · tambahkan SATU KALI di dalam group auth dan can:manage-admin",
+        "code": "Route::resource('/admin/users', UserController::class)\n    ->names('admin.users')\n    ->except(['show']);",
+        "explanation": "Route names menjadi admin.users.index, admin.users.create, dan seterusnya. Parameter {user} dihubungkan ke model User lewat route model binding. Belum bisa dibuka sebelum tiga view pada bonus berikutnya dibuat."
+      }
+    ],
+    "checklist": [
+      "Tidak ada route admin.users yang terdaftar dua kali.",
+      "Controller menolak perubahan/penghapusan akun admin.",
+      "Password tidak dipasang sebagai value pada form edit.",
+      "Role tidak diambil dari request publik."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-crud-user-views",
+    "index": 9,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 10,
+    "part": 1,
+    "mode": "bonus",
+    "title": "CRUD user: halaman daftar, tambah, edit",
+    "summary": "Buat tiga file Blade ini, lalu uji CRUD user memakai admin dan user biasa.",
+    "blocks": [
+      {
+        "heading": "Daftar user",
+        "language": "html",
+        "target": "resources/views/admin/users/index.blade.php · buat folder/file dan isi seluruhnya",
+        "code": "<x-app-layout>\n    <h1>Data User</h1>\n    @if(session('success')) <p>{{ session('success') }}</p> @endif\n    @if($errors->any()) <p>{{ $errors->first() }}</p> @endif\n    <a href=\"{{ route('admin.users.create') }}\">Tambah user</a>\n    <table>\n        <thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Aksi</th></tr></thead>\n        <tbody>\n            @foreach($users as $user)\n                <tr>\n                    <td>{{ $user->name }}</td>\n                    <td>{{ $user->email }}</td>\n                    <td>{{ $user->role }}</td>\n                    <td>\n                        @if($user->role !== 'admin')\n                            <a href=\"{{ route('admin.users.edit', $user) }}\">Edit</a>\n                            <form method=\"POST\" action=\"{{ route('admin.users.destroy', $user) }}\">\n                                @csrf\n                                @method('DELETE')\n                                <button type=\"submit\">Hapus user latihan</button>\n                            </form>\n                        @endif\n                    </td>\n                </tr>\n            @endforeach\n        </tbody>\n    </table>\n    {{ $users->links() }}\n</x-app-layout>",
+        "explanation": "Tampilkan nama/email/role, bukan password/hash. Pembatasan pada view membantu tampilan; pemeriksaan controller dan Gate tetap diperlukan."
+      },
+      {
+        "heading": "Form tambah user",
+        "language": "html",
+        "target": "resources/views/admin/users/create.blade.php · isi seluruh file baru",
+        "code": "<x-app-layout>\n    <h1>Tambah User</h1>\n    @if($errors->any()) <p>{{ $errors->first() }}</p> @endif\n    <form method=\"POST\" action=\"{{ route('admin.users.store') }}\">\n        @csrf\n        <label>Nama <input name=\"name\" value=\"{{ old('name') }}\" required></label>\n        <label>Email <input name=\"email\" type=\"email\" value=\"{{ old('email') }}\" required></label>\n        <label>Password <input name=\"password\" type=\"password\" minlength=\"8\" required></label>\n        <label>Konfirmasi password <input name=\"password_confirmation\" type=\"password\" required></label>\n        <button type=\"submit\">Simpan user</button>\n    </form>\n    <a href=\"{{ route('admin.users.index') }}\">Kembali</a>\n</x-app-layout>",
+        "explanation": "old mempertahankan input nama/email jika validasi gagal. Jangan mengisi ulang field password otomatis."
+      },
+      {
+        "heading": "Form edit user",
+        "language": "html",
+        "target": "resources/views/admin/users/edit.blade.php · isi seluruh file baru",
+        "code": "<x-app-layout>\n    <h1>Edit User</h1>\n    @if($errors->any()) <p>{{ $errors->first() }}</p> @endif\n    <form method=\"POST\" action=\"{{ route('admin.users.update', $user) }}\">\n        @csrf\n        @method('PUT')\n        <label>Nama <input name=\"name\" value=\"{{ old('name', $user->name) }}\" required></label>\n        <label>Email <input name=\"email\" type=\"email\" value=\"{{ old('email', $user->email) }}\" required></label>\n        <label>Password baru (boleh kosong) <input name=\"password\" type=\"password\" minlength=\"8\"></label>\n        <label>Konfirmasi password baru <input name=\"password_confirmation\" type=\"password\"></label>\n        <button type=\"submit\">Simpan perubahan</button>\n    </form>\n    <a href=\"{{ route('admin.users.index') }}\">Kembali</a>\n</x-app-layout>",
+        "explanation": "PUT diarahkan ke update(). Password kosong mempertahankan password sebelumnya; jika diisi, controller membuat hash baru."
+      }
+    ],
+    "checklist": [
+      "Buka /admin/users sebagai admin.",
+      "Tambah user latihan dan login dengan akun baru itu.",
+      "Ubah nama/email melalui admin; refresh untuk memastikan tersimpan.",
+      "Edit tanpa mengisi password, lalu pastikan password lama masih bisa login.",
+      "Email yang dipakai user lain harus ditolak.",
+      "User biasa ditolak ketika membuka /admin/users langsung.",
+      "Hapus user latihan, lalu pastikan akun tersebut tidak bisa login lagi."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-filter",
+    "index": 10,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 11,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Filter menu per kategori atau periode",
+    "summary": "Contoh periode pada halaman ini berarti tanggal MENU DIBUAT. Periode pesanan dibahas pada rekap berikutnya.",
+    "blocks": [
+      {
+        "heading": "Contoh query kategori",
+        "language": "sql",
+        "target": "SQL editor MySQL",
+        "code": "SELECT id, name, category, price\nFROM foods\nWHERE category = 'Minuman'\nORDER BY name;",
+        "explanation": "WHERE category menampilkan satu kategori. Untuk opsi Semua, jangan menambahkan kondisi kategori."
+      },
+      {
+        "heading": "Contoh query periode menu dibuat",
+        "language": "sql",
+        "target": "SQL editor MySQL",
+        "code": "SELECT id, name, category, created_at\nFROM foods\nWHERE created_at >= '2026-10-01 00:00:00'\n  AND created_at < '2026-11-01 00:00:00'\nORDER BY created_at;",
+        "explanation": "Batas akhir memakai kurang dari awal bulan berikutnya sehingga seluruh tanggal 31 Oktober ikut, termasuk waktu yang mempunyai pecahan detik."
+      },
+      {
+        "heading": "Filter di controller katalog",
+        "language": "php",
+        "target": "app/Http/Controllers/OrderController.php · ganti method index() hanya jika mencoba latihan bonus ini",
+        "code": "public function index(\\Illuminate\\Http\\Request $request)\n{\n    $filters = $request->validate([\n        'category' => 'nullable|in:Makanan,Minuman,Cemilan',\n        'start_date' => 'nullable|required_with:end_date|date_format:Y-m-d',\n        'end_date' => 'nullable|required_with:start_date|date_format:Y-m-d|after_or_equal:start_date',\n    ]);\n\n    $foods = Food::query()\n        ->when($filters['category'] ?? null, fn ($query, $category) => $query->where('category', $category))\n        ->when($filters['start_date'] ?? null, fn ($query, $date) => $query->whereDate('created_at', '>=', $date))\n        ->when($filters['end_date'] ?? null, fn ($query, $date) => $query->whereDate('created_at', '<=', $date))\n        ->get();\n\n    return view('customer.index', compact('foods'));\n}",
+        "explanation": "when menambahkan kondisi hanya jika nilai tersedia. ?? null memberi nilai cadangan. Validasi membatasi kategori serta memastikan pasangan tanggal lengkap dan berurutan. Import Food dari materi utama tetap dipakai."
+      },
+      {
+        "heading": "Form filter yang terpisah",
+        "language": "html",
+        "target": "resources/views/customer/index.blade.php · taruh SEBELUM form checkout, jangan di dalam form lain",
+        "code": "<form method=\"GET\" action=\"{{ route('customer.index') }}\">\n    <label>Kategori\n        <select name=\"category\">\n            <option value=\"\">Semua</option>\n            @foreach(['Makanan', 'Minuman', 'Cemilan'] as $category)\n                <option value=\"{{ $category }}\" @selected(request('category') === $category)>{{ $category }}</option>\n            @endforeach\n        </select>\n    </label>\n    <label>Dari tanggal menu dibuat <input type=\"date\" name=\"start_date\" value=\"{{ request('start_date') }}\"></label>\n    <label>Sampai tanggal <input type=\"date\" name=\"end_date\" value=\"{{ request('end_date') }}\"></label>\n    <button type=\"submit\">Terapkan filter</button>\n    <a href=\"{{ route('customer.index') }}\">Reset</a>\n</form>\n@if($errors->any()) <p>{{ $errors->first() }}</p> @endif",
+        "explanation": "GET menaruh filter pada URL sehingga hasil bisa dibuka ulang. Form filter tidak boleh membungkus atau bersarang dengan form POST checkout. Jika hasil kosong, tampilkan pesan tidak ada menu yang cocok."
+      }
+    ],
+    "checklist": [
+      "Pilih Minuman dan pastikan tidak ada Makanan/Cemilan.",
+      "Reset menampilkan semua kategori.",
+      "Periode yang mencakup tanggal seeder menampilkan datanya.",
+      "Tanggal akhir sebelum awal harus ditolak.",
+      "Jelaskan bahwa created_at makanan bukan tanggal makanan dipesan."
+    ],
+    "qa": []
+  },
+  {
+    "id": "bonus-rekap",
+    "index": 11,
+    "module": "bonus",
+    "group": "Latihan",
+    "step": 12,
+    "part": 1,
+    "mode": "bonus",
+    "title": "Rekapan menu yang diorder",
+    "summary": "Gabungkan pesanan dan detail untuk menghitung jumlah menu. Hitung omzet dari orders agar total pesanan tidak terhitung berulang.",
+    "blocks": [
+      {
+        "heading": "Jumlah tiap menu yang selesai dipesan dalam Oktober",
+        "language": "sql",
+        "target": "SQL editor MySQL · data orders, order_details, foods",
+        "code": "SELECT f.id, f.name, SUM(od.quantity) AS total_quantity\nFROM order_details AS od\nJOIN orders AS o ON o.id = od.order_id\nJOIN foods AS f ON f.id = od.food_id\nWHERE LOWER(o.status) IN ('completed', 'selesai')\n  AND o.created_at >= '2026-10-01 00:00:00'\n  AND o.created_at < '2026-11-01 00:00:00'\nGROUP BY f.id, f.name\nORDER BY total_quantity DESC, f.id ASC;",
+        "explanation": "JOIN menghubungkan tabel lewat ID. SUM menjumlahkan quantity per makanan. Filter status mengecualikan pending/batal. Yang dipakai adalah tanggal pesanan, bukan tanggal menu dibuat."
+      },
+      {
+        "heading": "Rekap jumlah pesanan dan omzet harian",
+        "language": "sql",
+        "target": "SQL editor MySQL · hitung langsung dari orders",
+        "code": "SELECT DATE(created_at) AS tanggal,\n       COUNT(*) AS jumlah_pesanan,\n       SUM(total_price) AS omzet\nFROM orders\nWHERE LOWER(status) IN ('completed', 'selesai')\n  AND created_at >= '2026-10-01 00:00:00'\n  AND created_at < '2026-11-01 00:00:00'\nGROUP BY DATE(created_at)\nORDER BY tanggal;",
+        "explanation": "Jangan SUM orders.total_price setelah JOIN detail tanpa mengelompokkan pesanan dahulu: satu pesanan dengan tiga detail akan terhitung tiga kali. Query ini membaca tabel orders langsung."
+      },
+      {
+        "heading": "Jika diminta menampilkan di Laravel",
+        "text": "Buat method laporan di controller admin, jalankan query lewat DB::select dengan binding tanggal/status atau query builder, lalu kirim hasil ke view. Daftarkan URL laporan dalam group auth dan can:manage-admin. Tampilkan kolom nama menu dan total_quantity untuk rekap menu, serta tanggal/jumlah_pesanan/omzet untuk rekap harian."
+      },
+      {
+        "heading": "Contoh method laporan menu",
+        "language": "php",
+        "target": "app/Http/Controllers/OrderController.php · method baru di dalam class, di luar method lain",
+        "code": "public function report(\\Illuminate\\Http\\Request $request)\n{\n    if (!$request->filled('start_date') && !$request->filled('end_date')) {\n        $menus = collect();\n        return view('admin.reports.menus', compact('menus'));\n    }\n\n    $dates = $request->validate([\n        'start_date' => 'required|date_format:Y-m-d',\n        'end_date' => 'required|date_format:Y-m-d|after_or_equal:start_date',\n    ]);\n\n    $menus = \\Illuminate\\Support\\Facades\\DB::table('order_details as od')\n        ->join('orders as o', 'o.id', '=', 'od.order_id')\n        ->join('foods as f', 'f.id', '=', 'od.food_id')\n        ->whereRaw('LOWER(o.status) IN (?, ?)', ['completed', 'selesai'])\n        ->whereDate('o.created_at', '>=', $dates['start_date'])\n        ->whereDate('o.created_at', '<=', $dates['end_date'])\n        ->select('f.id', 'f.name')\n        ->selectRaw('SUM(od.quantity) AS total_quantity')\n        ->groupBy('f.id', 'f.name')\n        ->orderByDesc('total_quantity')\n        ->orderBy('f.id')\n        ->get();\n\n    return view('admin.reports.menus', compact('menus'));\n}",
+        "explanation": "Tanda ? pada whereRaw diisi melalui binding, bukan gabungan input mentah. Rekap ini memakai quantity sehingga tidak bergantung pada perbedaan kolom price/subtotal pada materi asli."
+      },
+      {
+        "heading": "Route laporan",
+        "language": "php",
+        "target": "routes/web.php · tambahkan satu kali di group auth dan can:manage-admin",
+        "code": "Route::get('/admin/reports/menus', [OrderController::class, 'report'])->name('admin.reports.menus');",
+        "explanation": "Buka /admin/reports/menus untuk form tanggal. Akses contoh dengan hasil: /admin/reports/menus?start_date=2026-10-01&end_date=2026-10-31. Jika baru satu tanggal diisi atau urutannya salah, validasi mengembalikan error."
+      },
+      {
+        "heading": "View hasil rekap",
+        "language": "html",
+        "target": "resources/views/admin/reports/menus.blade.php · buat file baru",
+        "code": "<x-app-layout>\n    <h1>Rekap Menu yang Diorder</h1>\n    <form method=\"GET\" action=\"{{ route('admin.reports.menus') }}\">\n        <label>Dari <input type=\"date\" name=\"start_date\" value=\"{{ request('start_date') }}\" required></label>\n        <label>Sampai <input type=\"date\" name=\"end_date\" value=\"{{ request('end_date') }}\" required></label>\n        <button type=\"submit\">Tampilkan rekap</button>\n    </form>\n    @if($errors->any()) <p>{{ $errors->first() }}</p> @endif\n    <table>\n        <thead><tr><th>Menu</th><th>Jumlah dipesan</th></tr></thead>\n        <tbody>\n            @forelse($menus as $menu)\n                <tr><td>{{ $menu->name }}</td><td>{{ $menu->total_quantity }}</td></tr>\n            @empty\n                <tr><td colspan=\"2\">Tidak ada pesanan selesai pada periode ini.</td></tr>\n            @endforelse\n        </tbody>\n    </table>\n</x-app-layout>",
+        "explanation": "Tampilan ini fokus ke jumlah menu yang dipesan. Jalankan query omzet harian terpisah bila diminta total uang."
+      },
+      {
+        "heading": "Batas data asli",
+        "text": "Checkout materi asli masih memiliki perbedaan price/subtotal yang sudah dicatat. Untuk menguji laporan, checkout harus berhasil atau data latihan dibuat secara konsisten dulu. Query rekap tidak memperbaiki checkout tersebut. Jika menu/detail pernah terhapus karena cascade, data yang sudah terhapus tidak dapat muncul dalam rekap."
+      }
+    ],
+    "checklist": [
+      "Buat pesanan latihan dengan dua menu dan jumlah berbeda.",
+      "Tandai satu pesanan completed dan satu lainnya pending.",
+      "Rekap hanya memasukkan pesanan completed/selesai pada rentang tanggal.",
+      "Cocokkan jumlah menu dengan penjumlahan manual detail.",
+      "Cocokkan omzet harian dengan total_price tiap pesanan selesai, dihitung sekali per pesanan.",
+      "User biasa ditolak saat membuka URL laporan admin."
+    ],
+    "qa": [
+      {
+        "q": "Kenapa rekap jumlah menu memakai SUM(quantity), bukan COUNT(*)?",
+        "a": "Satu baris detail dapat berisi beberapa porsi. COUNT menghitung baris detail; SUM(quantity) menghitung jumlah porsi."
+      },
+      {
+        "q": "Apakah jumlah terjual sama dengan omzet?",
+        "a": "Tidak. Jumlah terjual adalah banyak item; omzet adalah nilai uang dari transaksi yang masuk perhitungan."
+      }
+    ]
+  }
+]

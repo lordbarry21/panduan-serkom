@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0
+
+- Tab Bonus kisi-kisi berisi 12 bab: 4 teori dan 8 latihan.
+- Teori tools, ERD/database, CRUD SQL, query dan manfaatnya.
+- Latihan login/register, role/Gate admin-user, CRUD food, CRUD user, filter kategori/periode, dan rekap order.
+- Setiap contoh bonus punya lokasi penerapan, penjelasan, dan tombol salin/buka kode. Progres bonus terpisah dari materi utama.
+- Materi bonus lengkap dibundel sebagai Markdown untuk dibaca offline.
+- Seluruh 55 kode asli dan progres materi utama tetap dipertahankan.
+
 ## 1.1.0
 
 - Filter Semua modul, Persiapan, dan Modul 1–4 di Lihat alur.

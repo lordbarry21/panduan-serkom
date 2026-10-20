@@ -14,6 +14,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, pre:focus-visib
 .heading button { flex-shrink: 0; }
 .sub, .muted { color: var(--vscode-descriptionForeground); }
 .sub { margin: 4px 0 18px; }
+.track-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.track-tabs button { flex: 1; }
+.track-tabs button[aria-pressed="true"] { color: var(--vscode-button-foreground); background: var(--vscode-button-background); }
+.bonus-block { margin: 22px 0; }
+.bonus-block h2 { font-size: 14px; }
+.bonus-block ul, #bonusChecklist { padding-left: 19px; }
+.bonus-block li, #bonusChecklist li { margin-bottom: 8px; }
+.bonus-target { display: block; overflow-wrap: anywhere; color: var(--vscode-textLink-foreground); margin: 8px 0; font-size: 12px; }
+.bonus-scope { border-left: 3px solid var(--vscode-focusBorder); padding-left: 10px; margin: 18px 0; }
+#bonusEyebrow { margin: 22px 0 4px; }
+#bonusNotice { border-left: 3px solid var(--vscode-focusBorder); padding: 8px 12px; overflow-wrap: anywhere; }
+#bonusNotice.error { border-color: var(--vscode-errorForeground); }
+#bonusQuestions summary { font-weight: 500; }
 .small { font-size: 12px; }
 .project { display: block; width: 100%; text-align: left; overflow-wrap: anywhere; margin-bottom: 18px; background: transparent; border: 1px solid var(--vscode-widget-border, var(--vscode-contrastBorder, #7775)); }
 .project span, .project strong { display: block; }

@@ -10,6 +10,7 @@ async function run() {
   const api = await extension.activate();
   assert.equal(api.steps.length, 55);
   const guide = api.guide;
+  await guide.receive({ type: 'track', track: 'main' });
   const root = vscode.Uri.file(process.env.SERKOM_TEST_PROJECT);
   await vscode.workspace.fs.createDirectory(root);
   guide.root = root.toString();
@@ -70,6 +71,27 @@ async function run() {
     await guide.receive({ type: 'copy' });
     assert.equal(await vscode.env.clipboard.readText(), hashStep.code, 'clipboard contains only original code');
   } finally { await vscode.env.clipboard.writeText(clipboard); }
-  fs.writeFileSync(process.env.SERKOM_HOST_REPORT, JSON.stringify({ ok: true, steps: 55, actualVSCodeHost: true, previewNonMutating: true, applyCorrect: true, stalePreviewBlocked: true, progressIsolated: true, explanationLineNavigation: true, clipboardCodeExact: true }, null, 2));
+  const originalMain = guide.state;
+  await guide.receive({ type: 'track', track: 'bonus' });
+  assert.equal(guide.catalog.length, 12);
+  assert.equal(guide.state.index, 0);
+  await guide.next();
+  assert.equal(guide.state.index, 1);
+  await guide.receive({ type: 'track', track: 'main' });
+  assert.deepEqual(guide.state, originalMain, 'bonus leaves original progress intact');
+  await guide.receive({ type: 'track', track: 'bonus' });
+  assert.equal(guide.state.index, 1, 'bonus progress restored');
+  const bonusLesson = guide.catalog.find(x => x.id === 'bonus-crud-sql');
+  await guide.save({ index: bonusLesson.index, completed: guide.state.completed });
+  const blockIndex = bonusLesson.blocks.findIndex(x => x.code);
+  const savedClipboard = await vscode.env.clipboard.readText();
+  try {
+    await guide.bonusBlock({ type: 'bonusCopy', lessonId: bonusLesson.id, block: blockIndex });
+    assert.equal(await vscode.env.clipboard.readText(), bonusLesson.blocks[blockIndex].code);
+  } finally { await vscode.env.clipboard.writeText(savedClipboard); }
+  await assert.rejects(() => guide.bonusBlock({ type: 'bonusCopy', lessonId: 'wrong', block: blockIndex }), /Buka ulang/);
+  await assert.rejects(() => guide.prepareEdit(), /diterapkan manual/);
+  await guide.receive({ type: 'track', track: 'main' });
+  fs.writeFileSync(process.env.SERKOM_HOST_REPORT, JSON.stringify({ ok: true, steps: 55, bonusChapters: 12, actualVSCodeHost: true, previewNonMutating: true, applyCorrect: true, stalePreviewBlocked: true, progressIsolated: true, explanationLineNavigation: true, clipboardCodeExact: true, bonusProgressIndependent: true, bonusCopyExact: true, bonusRejectsAutomaticEdits: true }, null, 2));
 }
 module.exports = { run };

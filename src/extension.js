@@ -5,6 +5,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const steps = require('../data/steps.json');
 const notes = require('../data/notes.json');
+const bonus = require('../data/bonus.json');
 const { boundedIndex, advance, planEdit, methodBounds } = require('./engine');
 
 class Guide {
@@ -16,14 +17,16 @@ class Guide {
     this.onDidChange = this.emitter.event;
     this.pending = null;
     this.busy = false;
+    this.track = context.workspaceState.get('selectedTrack') === 'bonus' ? 'bonus' : 'main';
     context.subscriptions.push(this.emitter);
   }
-  get key() { return 'progress:' + (this.root || 'no-project'); }
+  get catalog() { return this.track === 'bonus' ? bonus : steps; }
+  get key() { return 'progress:' + (this.root || 'no-project') + (this.track === 'bonus' ? ':bonus' : ''); }
   get state() {
     const saved = this.context.workspaceState.get(this.key, { index: 0, completed: [] });
-    return { index: boundedIndex(saved.index, steps.length), completed: Array.isArray(saved.completed) ? saved.completed.filter(x => Number.isInteger(x) && x >= 0 && x < steps.length) : [] };
+    return { index: boundedIndex(saved.index, this.catalog.length), completed: Array.isArray(saved.completed) ? saved.completed.filter(x => Number.isInteger(x) && x >= 0 && x < this.catalog.length) : [] };
   }
-  get step() { return steps[this.state.index]; }
+  get step() { return this.catalog[this.state.index]; }
   provideTextDocumentContent(uri) { return this.previews.get(uri.toString()) || ''; }
   previewUri(name, content) {
     const uri = vscode.Uri.parse('serkom-code:/' + crypto.randomUUID() + '/' + encodeURIComponent(name));
@@ -38,7 +41,7 @@ class Guide {
   }
   async render() {
     if (!this.view) return;
-    await this.view.webview.postMessage({ type: 'state', step: this.step, notes: notes[this.step.id] || [], steps: steps.map(x => ({ id: x.id, title: x.title, module: x.module, step: x.step, part: x.part })), state: this.state, project: this.root ? vscode.Uri.parse(this.root).fsPath : '', pending: !!this.pending, busy: this.busy });
+    await this.view.webview.postMessage({ type: 'state', track: this.track, step: this.step, notes: notes[this.step.id] || [], steps: this.catalog.map(x => ({ id: x.id, title: x.title, module: x.module, group: x.group, step: x.step, part: x.part })), state: this.state, project: this.root ? vscode.Uri.parse(this.root).fsPath : '', pending: !!this.pending, busy: this.busy });
   }
   resolveWebviewView(view) {
     this.view = view;
@@ -58,21 +61,31 @@ class Guide {
     this.busy = true; await this.render();
     try {
       switch (message.type) {
+        case 'track':
+          if (message.track === 'main' || message.track === 'bonus') {
+            this.track = message.track; this.pending = null;
+            await this.context.workspaceState.update('selectedTrack', this.track);
+          }
+          break;
         case 'project': await this.chooseProject(); break;
         case 'jump':
-          if (Number.isInteger(message.index) && message.index >= 0 && message.index < steps.length) await this.save({ ...this.state, index: message.index });
+          if (Number.isInteger(message.index) && message.index >= 0 && message.index < this.catalog.length) await this.save({ ...this.state, index: message.index });
           break;
         case 'next': await this.next(); break;
         case 'previous': await this.previous(); break;
         case 'uncomplete': await this.save({ ...this.state, completed: this.state.completed.filter(x => x !== this.state.index) }); break;
-        case 'copy': await vscode.env.clipboard.writeText(this.step.code); await this.notice('Kode asli disalin.'); break;
+        case 'copy':
+          if (this.track === 'bonus') throw new Error('Gunakan tombol salin pada blok contoh bonus yang dipilih.');
+          await vscode.env.clipboard.writeText(this.step.code); await this.notice('Kode asli disalin.'); break;
+        case 'bonusCopy':
+        case 'bonusCode': await this.bonusBlock(message); break;
         case 'code': await this.showCode(message.line); break;
         case 'open': await this.openTarget(); break;
         case 'preview': await this.prepareEdit(); break;
         case 'apply': await this.applyEdit(); break;
         case 'cancel': this.pending = null; break;
         case 'terminal': await this.openTerminal(); break;
-        case 'source': await vscode.window.showTextDocument(vscode.Uri.joinPath(this.context.extensionUri, 'data/pesanmakan.md'), { preview: true, viewColumn: vscode.ViewColumn.One }); break;
+        case 'source': await vscode.window.showTextDocument(vscode.Uri.joinPath(this.context.extensionUri, this.track === 'bonus' ? 'data/bonus-kisi-kisi.md' : 'data/pesanmakan.md'), { preview: true, viewColumn: vscode.ViewColumn.One }); break;
         case 'reset': {
           const answer = await vscode.window.showWarningMessage('Ulangi progres panduan proyek ini? File proyek tidak diubah.', { modal: true }, 'Ulangi progres');
           if (answer) await this.save({ index: 0, completed: [] });
@@ -87,10 +100,23 @@ class Guide {
     if (error) vscode.window.showErrorMessage('Serkom: ' + text);
   }
   async next() {
-    await this.save(advance(this.state, steps.length));
-    if (this.state.completed.length === steps.length) await this.notice('Semua langkah sudah kamu tandai selesai. Jalankan aplikasi dan uji alur pelanggan serta admin.');
+    await this.save(advance(this.state, this.catalog.length));
+    if (this.state.completed.length === this.catalog.length) await this.notice(this.track === 'bonus' ? 'Semua bab bonus sudah kamu tandai selesai. Ulangi jawaban teori dan checklist praktik tanpa melihat catatan.' : 'Semua langkah sudah kamu tandai selesai. Jalankan aplikasi dan uji alur pelanggan serta admin.');
   }
-  async previous() { await this.save({ ...this.state, index: boundedIndex(this.state.index - 1, steps.length) }); }
+  async previous() { await this.save({ ...this.state, index: boundedIndex(this.state.index - 1, this.catalog.length) }); }
+  async bonusBlock(message) {
+    if (this.track !== 'bonus' || message.lessonId !== this.step.id || !Number.isInteger(message.block)) throw new Error('Buka ulang bab bonus yang ingin dipakai.');
+    const block = this.step.blocks[message.block];
+    if (!block?.code) throw new Error('Blok contoh tidak ditemukan.');
+    if (message.type === 'bonusCopy') {
+      await vscode.env.clipboard.writeText(block.code);
+      await this.notice('Contoh bonus disalin. Ini materi tambahan, terpisah dari kode .md asli.');
+    } else {
+      const doc = await vscode.workspace.openTextDocument(this.previewUri(this.step.id + '.txt', block.code));
+      await vscode.languages.setTextDocumentLanguage(doc, block.language);
+      await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.One, preview: true });
+    }
+  }
   async chooseProject() {
     const picked = await vscode.window.showOpenDialog({ canSelectFiles: false, canSelectFolders: true, canSelectMany: false, title: 'Pilih folder proyek Laravel (yang berisi artisan)' });
     if (!picked?.length) return;
@@ -106,6 +132,7 @@ class Guide {
     return uri;
   }
   async targetUri() {
+    if (this.track === 'bonus') throw new Error('Contoh bonus dipelajari dan diterapkan manual; tidak menyisipkan ke proyek secara otomatis.');
     const step = this.step;
     if (step.mode === 'terminal') throw new Error('Langkah ini dikerjakan di terminal. Gunakan Salin command.');
     const root = await this.requireRoot();
@@ -148,6 +175,7 @@ class Guide {
     return editor;
   }
   async showCode(line) {
+    if (this.track === 'bonus') throw new Error('Gunakan Buka contoh pada blok bonus yang ingin dilihat.');
     const language = this.step.mode === 'terminal' ? 'shellscript' : this.step.target.endsWith('.php') && !this.step.target.includes('/views/') ? 'php' : this.step.target === '.env' ? 'dotenv' : 'html';
     const uri = this.previewUri(this.step.id + (language === 'php' ? '.php' : '.txt'), this.step.code);
     const doc = await vscode.workspace.openTextDocument(uri);

@@ -11,12 +11,13 @@
   <header>
     <div class="heading"><strong>Panduan Serkom</strong><button id="mapToggle" aria-expanded="false" aria-controls="map">Lihat alur</button></div>
     <p class="sub">Satu langkah dulu. Lanjut saat sudah paham.</p>
+    <nav class="track-tabs" aria-label="Pilih materi"><button id="mainTrack" aria-pressed="true">Materi utama</button><button id="bonusTrack" aria-pressed="false">Bonus kisi-kisi</button></nav>
     <button id="project" class="project" title="Pilih folder proyek Laravel"><span>Folder kerja</span><strong id="projectName">Pilih folder proyek</strong></button>
     <div class="progress-line"><span id="position">Memuat materi…</span><span id="count"></span></div>
     <progress id="progress" max="55" value="0" aria-label="Langkah yang ditandai selesai"></progress>
   </header>
   <section id="map" hidden aria-label="Peta semua langkah">
-    <label for="moduleFilter">Pilih modul</label>
+    <label id="moduleLabel" for="moduleFilter">Pilih modul</label>
     <select id="moduleFilter">
       <option value="all">Semua modul</option>
       <option value="0">Persiapan</option>
@@ -50,6 +51,19 @@
     <section class="next-info"><h2>Setelah ini</h2><p id="nextTitle"></p><code id="nextTarget"></code></section>
     <nav class="navigation" aria-label="Navigasi langkah"><button id="previous">Kembali</button><button id="next" class="primary">Selesai, lanjut</button></nav>
     <p class="small muted">Selesai berarti kamu menandai langkah ini. Aplikasi tidak menilai kode atau menjalankan command otomatis.</p>
+  </main>
+  <main id="bonusLesson" hidden aria-busy="false">
+    <p id="bonusEyebrow" class="muted"></p>
+    <h1 id="bonusTitle"></h1>
+    <p id="bonusSummary"></p>
+    <p class="bonus-scope small muted">Materi tambahan dari kisi-kisi. Contoh di sini terpisah dari 55 kode utama dan diterapkan manual pada proyek latihan.</p>
+    <p id="bonusDone" class="done" hidden>Sudah kamu tandai selesai <button id="bonusUncomplete">Tandai belum selesai</button></p>
+    <div id="bonusBlocks"></div>
+    <section><h2>Checklist sebelum lanjut</h2><ul id="bonusChecklist"></ul></section>
+    <section id="bonusQuestions" aria-label="Latihan tanya jawab"></section>
+    <p id="bonusNotice" role="status" aria-live="polite" hidden></p>
+    <nav class="navigation" aria-label="Navigasi bonus"><button id="bonusPrevious">Kembali</button><button id="bonusNext" class="primary">Selesai, lanjut</button></nav>
+    <p class="small muted">Progres bonus disimpan terpisah. Tanda selesai adalah penanda belajarmu, bukan hasil penilaian otomatis.</p>
   </main>
   <footer><button id="source">Buka materi lengkap</button><button id="reset">Ulangi progres</button><p>Progres tersimpan per folder kerja. <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> membuka panduan.</p></footer>
   <script nonce="{{nonce}}" src="{{js}}"></script>
