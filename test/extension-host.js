@@ -1,0 +1,75 @@
+'use strict';
+const vscode = require('vscode');
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+
+async function run() {
+  const extension = vscode.extensions.getExtension('bari-achmad-local.panduan-serkom');
+  assert.ok(extension, 'extension registered');
+  const api = await extension.activate();
+  assert.equal(api.steps.length, 55);
+  const guide = api.guide;
+  const root = vscode.Uri.file(process.env.SERKOM_TEST_PROJECT);
+  await vscode.workspace.fs.createDirectory(root);
+  guide.root = root.toString();
+  const step = api.steps.find(x => x.id === 'modul2-4-2-foodcontroller');
+  await guide.save({ index: step.index, completed: [] });
+  const uri = vscode.Uri.joinPath(root, step.target);
+  await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(uri, '..'));
+  const original = "<?php\nnamespace App\\Http\\Controllers;\nclass FoodController {\n    public function index() { return 'old'; }\n    public function create() { return 'keep'; }\n}\n";
+  await vscode.workspace.fs.writeFile(uri, Buffer.from(original));
+  await vscode.commands.executeCommand('serkom.open');
+  const editor = await guide.openTarget();
+  assert.equal(editor.document.uri.toString(), uri.toString());
+  await guide.prepareEdit();
+  assert.ok(guide.pending, 'preview staged');
+  assert.equal(editor.document.getText(), original, 'preview makes no file changes');
+  await guide.applyEdit();
+  assert.ok(editor.document.getText().includes("public function create() { return 'keep'; }"));
+  assert.ok(editor.document.getText().includes("$foods = Food::latest()->paginate(10);"));
+  await editor.document.save();
+  await guide.prepareEdit();
+  assert.equal(guide.pending, null, 'already matching body is a no-op');
+  // A preview must not overwrite changes typed after it was created.
+  const fresh = await vscode.workspace.openTextDocument(uri);
+  const restore = new vscode.WorkspaceEdit();
+  restore.replace(uri, new vscode.Range(fresh.positionAt(0), fresh.positionAt(fresh.getText().length)), original);
+  await vscode.workspace.applyEdit(restore);
+  await fresh.save();
+  await vscode.window.showTextDocument(fresh);
+  await guide.prepareEdit();
+  const edit = new vscode.WorkspaceEdit();
+  edit.insert(uri, new vscode.Position(0, 0), '// typed after preview\n');
+  await vscode.workspace.applyEdit(edit);
+  await assert.rejects(() => guide.applyEdit(), /berubah sejak/);
+  assert.ok(fresh.getText().startsWith('// typed after preview'));
+  await guide.next();
+  assert.equal(guide.state.index, step.index + 1);
+  assert.ok(guide.state.completed.includes(step.index));
+  await guide.previous();
+  assert.equal(guide.state.index, step.index);
+  guide.root = vscode.Uri.joinPath(root, 'other-project').toString();
+  assert.equal(guide.state.index, 0, 'progress isolated per project');
+  guide.root = root.toString();
+  assert.equal(guide.state.index, step.index, 'progress restored');
+  const revived = new (require('../src/extension').Guide)(guide.context);
+  revived.root = root.toString();
+  assert.equal(revived.state.index, step.index, 'progress survives provider reconstruction');
+  const commands = await vscode.commands.getCommands();
+  assert.ok(commands.includes('serkom.open'));
+  assert.ok(commands.includes('serkom.next'));
+  const hashStep = api.steps.find(x => x.id === 'modul1-6-3-databaseseeder');
+  const hashNote = require('../data/notes.json')[hashStep.id].find(x => x.code.startsWith('Hash::make'));
+  await guide.save({ index: hashStep.index, completed: guide.state.completed });
+  await guide.showCode(hashNote.line);
+  assert.equal(vscode.window.activeTextEditor.document.getText(), hashStep.code, 'explanation view preserves code');
+  assert.equal(vscode.window.activeTextEditor.selection.start.line, hashNote.line - 1, 'exact explanation line selected');
+  const clipboard = await vscode.env.clipboard.readText();
+  try {
+    await guide.receive({ type: 'copy' });
+    assert.equal(await vscode.env.clipboard.readText(), hashStep.code, 'clipboard contains only original code');
+  } finally { await vscode.env.clipboard.writeText(clipboard); }
+  fs.writeFileSync(process.env.SERKOM_HOST_REPORT, JSON.stringify({ ok: true, steps: 55, actualVSCodeHost: true, previewNonMutating: true, applyCorrect: true, stalePreviewBlocked: true, progressIsolated: true, explanationLineNavigation: true, clipboardCodeExact: true }, null, 2));
+}
+module.exports = { run };

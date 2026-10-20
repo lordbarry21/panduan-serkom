@@ -1,0 +1,4 @@
+* text=auto
+data/pesanmakan.md -text
+*.vsix binary
+*.png binary

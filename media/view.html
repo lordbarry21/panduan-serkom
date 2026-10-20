@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src {{csp}}; script-src 'nonce-{{nonce}}';">
+  <link rel="stylesheet" href="{{css}}">
+  <title>Panduan Serkom</title>
+</head>
+<body>
+  <header>
+    <div class="heading"><strong>Panduan Serkom</strong><button id="mapToggle" aria-expanded="false" aria-controls="map">Lihat alur</button></div>
+    <p class="sub">Satu langkah dulu. Lanjut saat sudah paham.</p>
+    <button id="project" class="project" title="Pilih folder proyek Laravel"><span>Folder kerja</span><strong id="projectName">Pilih folder proyek</strong></button>
+    <div class="progress-line"><span id="position">Memuat materi…</span><span id="count"></span></div>
+    <progress id="progress" max="55" value="0" aria-label="Langkah yang ditandai selesai"></progress>
+  </header>
+  <section id="map" hidden aria-label="Peta semua langkah">
+    <label for="moduleFilter">Pilih modul</label>
+    <select id="moduleFilter">
+      <option value="all">Semua modul</option>
+      <option value="0">Persiapan</option>
+      <option value="1">Modul 1 · Database dan model</option>
+      <option value="2">Modul 2 · Login dan CRUD menu</option>
+      <option value="3">Modul 3 · Pemesanan pelanggan</option>
+      <option value="4">Modul 4 · Dashboard dan route</option>
+    </select>
+    <label for="search">Cari langkah atau file</label>
+    <input id="search" type="search" placeholder="Contoh: FoodController, modul 2">
+    <div class="filter-summary"><span id="filterCount" role="status" aria-live="polite"></span><button id="clearFilters">Hapus filter</button></div>
+    <div id="stepList"></div>
+  </section>
+  <main id="lesson" aria-busy="true">
+    <p id="eyebrow" class="muted"></p>
+    <h1 id="title">Menyiapkan panduan</h1>
+    <div id="completed" class="done" hidden>Sudah kamu tandai selesai <button id="uncomplete">Tandai belum selesai</button></div>
+    <section class="instruction"><h2 id="targetLabel">Buka file</h2><code id="target"></code><button id="open" class="secondary">Buka file tujuan</button><button id="terminal" class="secondary" hidden>Buka terminal proyek</button></section>
+    <section class="instruction"><h2>Kerjakan di sini</h2><p id="where"></p></section>
+    <section class="instruction"><h2>Tujuannya</h2><p id="goal"></p></section>
+    <aside id="warning" class="warning" hidden></aside>
+    <section class="code-section">
+      <div class="heading"><h2>Kode asli materi</h2><button id="copy">Salin kode</button></div>
+      <pre id="code" tabindex="0" aria-label="Kode asli langkah ini"></pre>
+      <details id="explanations" open hidden><summary>Penjelasan bagian penting <span id="noteCount"></span></summary><p class="small muted note-intro">Catatan belajar ini terpisah. Kode yang disalin/disisipkan tetap asli.</p><div id="notes"></div></details>
+      <div class="actions"><button id="codePreview">Buka kode di editor</button><button id="preview" class="primary">Pratinjau sisipkan kode</button></div>
+      <p id="manualHint" class="muted small" hidden>Pilih blok lama pada file tujuan untuk diganti, lalu buka pratinjau. Untuk menambah di posisi tertentu, salin kode dan tempel sendiri.</p>
+      <div id="pending" class="pending" hidden><p>Bandingkan sisi sebelum dan sesudah di editor.</p><button id="apply" class="primary">Terapkan perubahan</button><button id="cancel">Batal</button></div>
+    </section>
+    <p id="notice" role="status" aria-live="polite" hidden></p>
+    <section class="next-info"><h2>Setelah ini</h2><p id="nextTitle"></p><code id="nextTarget"></code></section>
+    <nav class="navigation" aria-label="Navigasi langkah"><button id="previous">Kembali</button><button id="next" class="primary">Selesai, lanjut</button></nav>
+    <p class="small muted">Selesai berarti kamu menandai langkah ini. Aplikasi tidak menilai kode atau menjalankan command otomatis.</p>
+  </main>
+  <footer><button id="source">Buka materi lengkap</button><button id="reset">Ulangi progres</button><p>Progres tersimpan per folder kerja. <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> membuka panduan.</p></footer>
+  <script nonce="{{nonce}}" src="{{js}}"></script>
+</body>
+</html>

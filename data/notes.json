@@ -1,0 +1,440 @@
+{
+  "modul1-2-1-buat-food": [
+    {
+      "code": "php artisan make:model Food -mcr",
+      "line": 1,
+      "text": "-m membuat migration, -c membuat controller, dan -r membuat controller dengan method resource/CRUD. Food adalah nama modelnya."
+    }
+  ],
+  "modul1-2-2-buat-order": [
+    {
+      "code": "php artisan make:model Order -mcr",
+      "line": 1,
+      "text": "-m membuat migration, -c membuat controller, dan -r membuat controller dengan method resource/CRUD. Order adalah nama modelnya."
+    }
+  ],
+  "modul1-3-1-migration-foods": [
+    {
+      "code": "->enum('category'",
+      "line": 2,
+      "text": "Nilai kategori dibatasi ke pilihan yang tertulis di dalam array. Teks di luar pilihan itu tidak sesuai dengan aturan kolom."
+    },
+    {
+      "code": "->nullable()",
+      "line": 5,
+      "text": "Kolom boleh menyimpan NULL, yaitu tidak ada nilai. Cocok untuk gambar yang belum diunggah."
+    }
+  ],
+  "modul1-3-3-migration-order-details": [
+    {
+      "code": "->foreignId(",
+      "line": 2,
+      "text": "Membuat kolom ID untuk menghubungkan baris ini dengan data pada tabel lain. Aturan hubungan database ditambahkan lewat constrained."
+    },
+    {
+      "code": "->constrained(",
+      "line": 3,
+      "text": "Membuat aturan foreign key ke tabel yang disebut, dengan kolom id sebagai tujuan bawaan. ID yang disimpan harus merujuk ke data induk yang ada."
+    },
+    {
+      "code": "->onDelete('cascade')",
+      "line": 4,
+      "text": "Jika data induk dihapus, baris detail yang terhubung ikut dihapus oleh database. Contohnya: menghapus pesanan juga menghapus detail pesanan itu."
+    }
+  ],
+  "modul1-5-2-foodseeder": [
+    {
+      "code": "DB::table('foods')->insert([",
+      "line": 1,
+      "text": "Memasukkan beberapa baris contoh langsung ke tabel foods. Array terluar menampung daftar makanan; tiap array di dalamnya mewakili satu baris."
+    }
+  ],
+  "modul1-6-1-databaseseeder": [
+    {
+      "code": "use Illuminate\\Support\\Facades\\Hash;",
+      "line": 1,
+      "text": "Import ini membuat nama pendek Hash bisa digunakan. Mengimpor class belum menjalankan proses hashing."
+    }
+  ],
+  "modul1-6-2-databaseseeder": [
+    {
+      "code": "use WithoutModelEvents;",
+      "line": 1,
+      "text": "Trait ini menonaktifkan event model ketika seeder berjalan. Kode listener/observer model tidak ikut terpanggil dari seeder tersebut."
+    }
+  ],
+  "modul1-6-3-databaseseeder": [
+    {
+      "code": "Hash::make('password123')",
+      "line": 5,
+      "text": "Hash mengubah password menjadi hasil satu arah untuk disimpan. Saat login, sistem mengecek kecocokan password dengan hash; hasil ini tidak dibuka kembali menjadi password asli."
+    },
+    {
+      "code": "$this->call([",
+      "line": 9,
+      "text": "DatabaseSeeder meminta Laravel menjalankan seeder lain dalam daftar ini, yaitu FoodSeeder. $this berarti objek class yang sedang berjalan."
+    }
+  ],
+  "modul1-7-1-reset-dan-seed": [
+    {
+      "code": "migrate:fresh --seed",
+      "line": 1,
+      "text": "fresh menghapus semua tabel lalu membuatnya kembali; --seed mengisi data contoh. Ini bukan sekadar menambahkan tabel yang belum ada."
+    }
+  ],
+  "modul1-8-2-food": [
+    {
+      "code": "use HasFactory;",
+      "line": 1,
+      "text": "Trait menambahkan kemampuan ke class. HasFactory menyediakan akses factory untuk membuat data contoh/pengujian; baris ini sendiri tidak membuat data."
+    }
+  ],
+  "modul1-8-3-food": [
+    {
+      "code": "protected $guarded = ['id'];",
+      "line": 2,
+      "text": "Saat mengisi banyak atribut sekaligus melalui create/update, kolom id tidak boleh diisi lewat daftar atribut itu. Ini pengaturan pengisian model, bukan pembatas akses admin."
+    }
+  ],
+  "modul1-8-5-order": [
+    {
+      "code": "use HasFactory;",
+      "line": 1,
+      "text": "Trait menambahkan kemampuan ke class. HasFactory menyediakan akses factory untuk membuat data contoh/pengujian; baris ini sendiri tidak membuat data."
+    }
+  ],
+  "modul1-8-6-order": [
+    {
+      "code": "protected $guarded = ['id'];",
+      "line": 1,
+      "text": "Saat mengisi banyak atribut sekaligus melalui create/update, kolom id tidak boleh diisi lewat daftar atribut itu. Ini pengaturan pengisian model, bukan pembatas akses admin."
+    },
+    {
+      "code": "->hasMany(",
+      "line": 6,
+      "text": "Relasi satu-ke-banyak: satu pesanan dapat memiliki beberapa baris detail. orderDetails dapat dipakai untuk membaca semua item pesanan."
+    }
+  ],
+  "modul1-8-8-orderdetail": [
+    {
+      "code": "use HasFactory;",
+      "line": 1,
+      "text": "Trait menambahkan kemampuan ke class. HasFactory menyediakan akses factory untuk membuat data contoh/pengujian; baris ini sendiri tidak membuat data."
+    }
+  ],
+  "modul1-8-9-orderdetail": [
+    {
+      "code": "protected $table = 'order_details';",
+      "line": 1,
+      "text": "Menentukan tabel database yang dipakai model. Model OrderDetail ini diarahkan ke tabel order_details."
+    },
+    {
+      "code": "protected $guarded = ['id'];",
+      "line": 2,
+      "text": "Saat mengisi banyak atribut sekaligus melalui create/update, kolom id tidak boleh diisi lewat daftar atribut itu. Ini pengaturan pengisian model, bukan pembatas akses admin."
+    },
+    {
+      "code": "->belongsTo(",
+      "line": 7,
+      "text": "Relasi dari detail menuju data induknya. Contohnya food() membaca satu makanan yang dirujuk oleh food_id pada detail."
+    }
+  ],
+  "modul2-3-2-storage-link": [
+    {
+      "code": "php artisan storage:link",
+      "line": 1,
+      "text": "Membuat tautan dari public/storage menuju storage/app/public agar gambar di disk public dapat diakses lewat browser."
+    }
+  ],
+  "modul2-4-2-foodcontroller": [
+    {
+      "code": "->paginate(10)",
+      "line": 1,
+      "text": "Membagi daftar ke beberapa halaman, paling banyak 10 data per halaman. Ini membuat seluruh menu tidak harus ditampilkan sekaligus."
+    },
+    {
+      "code": "Food::latest()",
+      "line": 1,
+      "text": "Mengambil query makanan dengan urutan terbaru berdasarkan created_at secara bawaan. Query baru dijalankan saat hasilnya diminta, misalnya oleh paginate."
+    },
+    {
+      "code": "compact('foods')",
+      "line": 2,
+      "text": "Membentuk array dengan nama foods dan isi dari variabel $foods. Ini mengirim data ke view agar Blade bisa membacanya."
+    }
+  ],
+  "modul2-4-4-foodcontroller": [
+    {
+      "code": "$request->validate([",
+      "line": 1,
+      "text": "Memeriksa data dari form sesuai aturan. Jika input tidak lolos, Laravel mengembalikan error validasi dan kode berikutnya tidak dilanjutkan seperti input normal."
+    },
+    {
+      "code": "required|string|max:255",
+      "line": 2,
+      "text": "Wajib diisi, harus berupa teks, dan panjangnya paling banyak 255 karakter. Tanda | memisahkan beberapa aturan validasi."
+    },
+    {
+      "code": "nullable|image|mimes:jpeg,png,jpg|max:2048",
+      "line": 6,
+      "text": "File gambar boleh tidak dikirim. Jika dikirim harus berupa gambar dengan tipe yang diizinkan, dan ukurannya paling besar 2048 KB."
+    },
+    {
+      "code": "->store('foods', 'public')",
+      "line": 11,
+      "text": "Menyimpan unggahan di folder foods pada disk public. Nilai yang dikembalikan adalah path file untuk dicatat di database, bukan isi gambar."
+    },
+    {
+      "code": "->with('success'",
+      "line": 22,
+      "text": "Menitipkan pesan sementara di session untuk request berikutnya setelah redirect. Ini berbeda dari with untuk eager loading pada query model."
+    }
+  ],
+  "modul2-4-5-foodcontroller": [
+    {
+      "code": "compact('food')",
+      "line": 1,
+      "text": "Membentuk array dengan nama food dan isi dari variabel $food. View edit menerima data satu makanan melalui nama itu."
+    }
+  ],
+  "modul2-4-6-foodcontroller": [
+    {
+      "code": "$request->validate([",
+      "line": 1,
+      "text": "Memeriksa data dari form sesuai aturan. Jika input tidak lolos, Laravel mengembalikan error validasi dan kode berikutnya tidak dilanjutkan seperti input normal."
+    },
+    {
+      "code": "required|string|max:255",
+      "line": 2,
+      "text": "Wajib diisi, harus berupa teks, dan panjangnya paling banyak 255 karakter. Tanda | memisahkan beberapa aturan validasi."
+    },
+    {
+      "code": "nullable|image|mimes:jpeg,png,jpg|max:2048",
+      "line": 6,
+      "text": "File gambar boleh tidak dikirim. Jika dikirim harus berupa gambar dengan tipe yang diizinkan, dan ukurannya paling besar 2048 KB."
+    },
+    {
+      "code": "Storage::disk('public')->delete",
+      "line": 12,
+      "text": "Menghapus file gambar dari disk public. Menghapus baris makanan di database saja tidak otomatis menghapus file gambar."
+    },
+    {
+      "code": "->store('foods', 'public')",
+      "line": 14,
+      "text": "Menyimpan unggahan di folder foods pada disk public. Nilai yang dikembalikan adalah path file untuk dicatat di database, bukan isi gambar."
+    },
+    {
+      "code": "->with('success'",
+      "line": 25,
+      "text": "Menitipkan pesan sementara di session untuk request berikutnya setelah redirect. Ini berbeda dari with untuk eager loading pada query model."
+    }
+  ],
+  "modul2-4-7-foodcontroller": [
+    {
+      "code": "Storage::disk('public')->delete",
+      "line": 2,
+      "text": "Menghapus file gambar dari disk public. Menghapus baris makanan di database saja tidak otomatis menghapus file gambar."
+    },
+    {
+      "code": "->with('success'",
+      "line": 6,
+      "text": "Menitipkan pesan sementara di session untuk request berikutnya setelah redirect. Ini berbeda dari with untuk eager loading pada query model."
+    }
+  ],
+  "modul2-5-1-view-index": [
+    {
+      "code": "asset('storage/'",
+      "line": 28,
+      "text": "Membentuk URL aset gambar yang dapat dibaca browser. public/storage harus sudah terhubung lewat storage:link."
+    },
+    {
+      "code": "@csrf",
+      "line": 39,
+      "text": "Blade membuat input token agar Laravel dapat memeriksa bahwa kiriman form berasal dari sesi yang sah. Token dibutuhkan oleh form POST pada aplikasi web Laravel."
+    },
+    {
+      "code": "@method('DELETE')",
+      "line": 40,
+      "text": "Form HTML mengirim POST, tetapi input tersembunyi ini memberi tahu Laravel untuk memperlakukannya sebagai DELETE agar cocok dengan route hapus."
+    }
+  ],
+  "modul2-5-2-view-create": [
+    {
+      "code": "enctype=\"multipart/form-data\"",
+      "line": 7,
+      "text": "Memungkinkan form mengirim isi file unggahan, bukan hanya teks biasa. Dibutuhkan untuk input gambar."
+    },
+    {
+      "code": "@csrf",
+      "line": 8,
+      "text": "Blade membuat input token agar Laravel dapat memeriksa bahwa kiriman form berasal dari sesi yang sah. Token dibutuhkan oleh form POST pada aplikasi web Laravel."
+    }
+  ],
+  "modul2-5-3-view-edit": [
+    {
+      "code": "enctype=\"multipart/form-data\"",
+      "line": 7,
+      "text": "Memungkinkan form mengirim isi file unggahan, bukan hanya teks biasa. Dibutuhkan untuk input gambar."
+    },
+    {
+      "code": "@csrf",
+      "line": 8,
+      "text": "Blade membuat input token agar Laravel dapat memeriksa bahwa kiriman form berasal dari sesi yang sah. Token dibutuhkan oleh form POST pada aplikasi web Laravel."
+    },
+    {
+      "code": "@method('PUT')",
+      "line": 9,
+      "text": "Form HTML mengirim POST, tetapi Laravel membacanya sebagai PUT supaya cocok dengan route pembaruan data."
+    }
+  ],
+  "modul3-1-2-ordercontroller": [
+    {
+      "code": "compact('foods')",
+      "line": 2,
+      "text": "Membentuk array dengan nama foods dan isi dari variabel $foods. Ini mengirim data ke view agar Blade bisa membacanya."
+    }
+  ],
+  "modul3-1-3-ordercontroller": [
+    {
+      "code": "$request->validate([",
+      "line": 1,
+      "text": "Memeriksa data dari form sesuai aturan. Jika input tidak lolos, Laravel mengembalikan error validasi dan kode berikutnya tidak dilanjutkan seperti input normal."
+    },
+    {
+      "code": "required|string|max:255",
+      "line": 2,
+      "text": "Wajib diisi, harus berupa teks, dan panjangnya paling banyak 255 karakter. Tanda | memisahkan beberapa aturan validasi."
+    },
+    {
+      "code": "fn ($qty) => $qty > 0",
+      "line": 8,
+      "text": "Fungsi singkat yang menerima satu jumlah. Hasilnya true hanya untuk jumlah di atas nol, sehingga array_filter membuang item yang tidak dipesan."
+    },
+    {
+      "code": "DB::beginTransaction();",
+      "line": 14,
+      "text": "Memulai satu kelompok perubahan database. Kelompok ini baru dipastikan tersimpan lewat commit, atau dibatalkan lewat rollBack jika ada kegagalan."
+    },
+    {
+      "code": "Food::findOrFail($foodId)",
+      "line": 26,
+      "text": "Mencari makanan berdasarkan ID. Jika ID tidak ditemukan, Laravel melempar exception, lalu alur ini masuk ke catch."
+    },
+    {
+      "code": "DB::commit();",
+      "line": 39,
+      "text": "Menyetujui perubahan database pada transaksi aktif agar tersimpan. Dipanggil setelah pesanan dan semua detail berhasil dibuat."
+    },
+    {
+      "code": "->with('success'",
+      "line": 41,
+      "text": "Menitipkan pesan sementara di session untuk request berikutnya setelah redirect. Ini berbeda dari with untuk eager loading pada query model."
+    },
+    {
+      "code": "DB::rollBack();",
+      "line": 43,
+      "text": "Membatalkan perubahan pada transaksi yang belum di-commit ketika proses masuk ke catch. Pesanan tidak dibiarkan tersimpan sebagian."
+    }
+  ],
+  "modul3-1-4-ordercontroller": [
+    {
+      "code": "Order::with('orderDetails.food')",
+      "line": 3,
+      "text": "Memuat pesanan beserta detail dan makanan terkait sekaligus lewat eager loading. Tanda titik berarti relasi bertingkat: pesanan → detail → makanan."
+    },
+    {
+      "code": "compact('orders')",
+      "line": 4,
+      "text": "Mengirim variabel $orders ke view dengan nama orders. Itu yang dipakai perulangan pada dashboard."
+    }
+  ],
+  "modul3-1-5-ordercontroller": [
+    {
+      "code": "$request->validate([",
+      "line": 3,
+      "text": "Memeriksa data dari form sesuai aturan. Jika input tidak lolos, Laravel mengembalikan error validasi dan kode berikutnya tidak dilanjutkan seperti input normal."
+    },
+    {
+      "code": "Order::findOrFail($id)",
+      "line": 4,
+      "text": "Mencari pesanan berdasarkan ID. Jika tidak ada, Laravel menghentikan alur normal dengan exception."
+    },
+    {
+      "code": "->with('success'",
+      "line": 7,
+      "text": "Menitipkan pesan sementara di session untuk request berikutnya setelah redirect. Ini berbeda dari with untuk eager loading pada query model."
+    }
+  ],
+  "modul3-2-1-view-index": [
+    {
+      "code": "@csrf",
+      "line": 44,
+      "text": "Blade membuat input token agar Laravel dapat memeriksa bahwa kiriman form berasal dari sesi yang sah. Token dibutuhkan oleh form POST pada aplikasi web Laravel."
+    },
+    {
+      "code": "asset('storage/'",
+      "line": 68,
+      "text": "Membentuk URL aset gambar yang dapat dibaca browser. public/storage harus sudah terhubung lewat storage:link."
+    }
+  ],
+  "modul3-3-1-orderdetail": [
+    {
+      "code": "protected $table = 'order_details';",
+      "line": 1,
+      "text": "Menentukan tabel database yang dipakai model. Model OrderDetail ini diarahkan ke tabel order_details."
+    },
+    {
+      "code": "protected $guarded = ['id'];",
+      "line": 3,
+      "text": "Saat mengisi banyak atribut sekaligus melalui create/update, kolom id tidak boleh diisi lewat daftar atribut itu. Ini pengaturan pengisian model, bukan pembatas akses admin."
+    },
+    {
+      "code": "->belongsTo(",
+      "line": 7,
+      "text": "Relasi dari detail menuju data induknya. Contohnya food() membaca satu makanan yang dirujuk oleh food_id pada detail."
+    }
+  ],
+  "modul4-1-1-view-dashboard": [
+    {
+      "code": "@forelse(",
+      "line": 41,
+      "text": "Melakukan perulangan seperti foreach, dengan bagian @empty untuk tampilan ketika daftar pesanan kosong."
+    },
+    {
+      "code": "?? 'Menu'",
+      "line": 54,
+      "text": "Operator ?? memakai nilai cadangan Menu ketika nilai sebelumnya tidak tersedia atau NULL. Ini membantu menampilkan label pengganti."
+    },
+    {
+      "code": "@csrf",
+      "line": 75,
+      "text": "Blade membuat input token agar Laravel dapat memeriksa bahwa kiriman form berasal dari sesi yang sah. Token dibutuhkan oleh form POST pada aplikasi web Laravel."
+    },
+    {
+      "code": "@method('PATCH')",
+      "line": 76,
+      "text": "Form HTML mengirim POST, tetapi Laravel membacanya sebagai PATCH supaya cocok dengan route perubahan status."
+    }
+  ],
+  "modul4-2-2-web": [
+    {
+      "code": "->name('customer.index')",
+      "line": 2,
+      "text": "Memberi nama tetap untuk route. Pemanggilan route dengan nama ini menghasilkan URL tanpa harus menulis alamatnya berulang-ulang."
+    }
+  ],
+  "modul4-2-3-web": [
+    {
+      "code": "->middleware(['auth', 'verified'])",
+      "line": 3,
+      "text": "Route melewati pemeriksaan autentikasi dan middleware verifikasi email. Perilaku verifikasi bergantung pada konfigurasi model pengguna dan aplikasi."
+    }
+  ],
+  "modul4-2-4-web": [
+    {
+      "code": "Route::resource('/admin/foods'",
+      "line": 4,
+      "text": "Mendaftarkan kumpulan route CRUD sekaligus, seperti index, create, store, edit, update, dan destroy pada FoodController."
+    }
+  ]
+}
