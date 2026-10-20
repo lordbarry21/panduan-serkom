@@ -2,11 +2,13 @@
 
 Materi tambahan untuk belajar teori dan latihan. Contoh bonus tidak berasal dari pesanmakan.md dan tidak mengubah 55 langkah asli. Contoh kode perlu diterapkan sendiri pada proyek latihan setelah prasyaratnya selesai.
 
-## 1. Tools untuk membuat proyek
+## Teori 1 · Tools untuk membuat proyek
 
 Jalur: Teori
 
-Kenali alatnya dan jelaskan fungsi masing-masing dengan satu kalimat.
+### Pengertian / jawaban singkat
+
+Tools utama: VS Code untuk menulis kode, PHP untuk menjalankan backend, Laravel sebagai framework, Composer untuk paket PHP, MySQL untuk database, serta Node.js/npm untuk tooling frontend. Browser dipakai untuk menguji hasil.
 
 ### Alat dan perannya
 
@@ -43,11 +45,13 @@ Saya menulis kode memakai VS Code, menjalankan Laravel dengan PHP, mengelola pak
 - [ ] Bisa menyebut fungsi Composer dan npm.
 - [ ] Bisa menunjukkan cara menjalankan proyek yang sudah disiapkan.
 
-## 2. Fungsi ERD dan database
+## Teori 2 · Fungsi ERD dan database
 
 Jalur: Teori
 
-ERD adalah peta hubungan data; database menyimpan dan mengelola data sebenarnya.
+### Pengertian / jawaban singkat
+
+ERD adalah diagram rancangan entitas, atribut, dan relasi. Database adalah tempat penyimpanan/pengelolaan data sebenarnya. ERD membantu menentukan struktur tabel; primary key membedakan record dan foreign key menghubungkan tabel.
 
 ### Istilah yang perlu dipahami
 
@@ -80,19 +84,13 @@ Pada .md asli, orders belum mempunyai user_id. Nama pelanggan disimpan sebagai t
 - [ ] Bisa menjelaskan mengapa pesanan perlu tabel detail.
 - [ ] Bisa menunjuk primary key dan foreign key.
 
-**Apa fungsi ERD?**
-
-Merencanakan entitas, atribut, dan hubungan data agar struktur database jelas sebelum implementasi.
-
-**Kenapa detail pesanan tidak ditaruh dalam satu teks panjang?**
-
-Agar tiap makanan dan jumlahnya dapat dicari, dihitung, serta dihubungkan dengan tabel makanan.
-
-## 3. CRUD MySQL: tambah, lihat, edit, hapus
+## Teori 3 · CRUD MySQL: tambah, lihat, edit, hapus
 
 Jalur: Teori
 
-CRUD adalah empat operasi dasar data. MySQL menjalankan perintah SQL untuk operasi tersebut.
+### Pengertian / jawaban singkat
+
+CRUD berarti Create, Read, Update, Delete. Dalam SQL MySQL: tambah memakai INSERT, tampilkan memakai SELECT, edit memakai UPDATE, dan hapus memakai DELETE. WHERE membatasi record yang diproses.
 
 ### Pasangan yang harus hafal
 
@@ -159,11 +157,13 @@ DELETE menghapus record. Menghilangkan WHERE pada UPDATE/DELETE dapat mengubah a
 - [ ] Bisa menampilkan data sesudah INSERT dan UPDATE.
 - [ ] Bisa menjelaskan kegunaan WHERE sebelum menjalankan DELETE.
 
-## 4. Apa itu query dan manfaatnya?
+## Teori 4 · Apa itu query dan manfaatnya?
 
 Jalur: Teori
 
-Query adalah permintaan/perintah yang dikirim ke database untuk membaca atau mengubah data.
+### Pengertian / jawaban singkat
+
+Query adalah permintaan/perintah ke database. Manfaatnya untuk membaca, menyaring, mengurutkan, menambah, mengubah, menghapus, dan membuat rekap data secara terukur tanpa menghitung manual.
 
 ### Jawaban singkat untuk ujian
 
@@ -205,15 +205,27 @@ Food::all() pada Laravel juga membaca database. Eloquent menerjemahkan pemanggil
 - [ ] Bisa membedakan WHERE, ORDER BY, GROUP BY, dan LIMIT.
 - [ ] Bisa membaca hasil query dan menjelaskan artinya.
 
-**Apakah query cuma SELECT?**
-
-Tidak. Istilah query sering dipakai untuk permintaan database; perintah tambah, ubah, dan hapus juga dikirim ke database. SELECT adalah contoh query pembacaan.
-
-## 5. Login dan register admin/user
+## Soal 1 · Login dan register admin/user
 
 Jalur: Latihan
 
-Mulai dari autentikasi Breeze yang sudah dipakai materi utama, lalu bedakan login dan hak akses.
+### Soal latihan
+
+Buat halaman login dan register. Akun user dapat membuka katalog, sedangkan akun admin dapat mengakses dashboard dan halaman pengelolaan. User biasa tidak boleh membuka URL admin secara langsung.
+
+### Langkah pengerjaan
+
+1. Siapkan database/proyek latihan. Pasang dan jalankan Breeze sesuai modul 2 step 1–3, lalu coba halaman /register dan /login.
+2. Buat migration baru untuk kolom users.role dengan default user, isi migration memakai jawaban di bawah, lalu jalankan php artisan migrate.
+3. Tetapkan role admin pada akun seeder latihan melalui Tinker. Akun register publik tetap mendapatkan role user.
+4. Tambahkan import dan Gate manage-admin pada AppServiceProvider.boot().
+5. Ganti route dashboard dan pindahkan route admin ke group auth dan can:manage-admin. Jangan menduplikasi route.
+6. Atur redirect sukses login/register: admin ke dashboard, user ke katalog, dengan tetap mempertahankan validasi dan proses autentikasi Breeze.
+7. Uji register/login/logout, password salah, dan akses langsung URL admin memakai user biasa.
+
+### Jawaban / contoh penyelesaian
+
+Jawabannya memakai autentikasi Breeze ditambah kolom role dan Gate di server. Login memeriksa identitas; Gate membatasi hak akses. Kode lengkap penambahan role, Gate, route, dan redirect ada di bawah.
 
 ### Alur yang dikerjakan
 
@@ -233,23 +245,6 @@ Hash::make menyimpan hash password. Input konfirmasi harus cocok dengan password
 ### Hal yang belum tercakup otomatis
 
 Materi utama sudah memasang login/register, tetapi belum membedakan role admin dan user. Menyembunyikan tombol admin saja tidak cukup; URL admin harus dibatasi dari server.
-
-### Checklist latihan
-
-- [ ] Register user baru berhasil.
-- [ ] Email yang sama ditolak saat register lagi.
-- [ ] Login dengan password salah ditolak.
-- [ ] Logout membuat halaman yang butuh login tidak bisa diakses langsung.
-
-**Kenapa user biasa tidak boleh memilih role admin saat register?**
-
-Karena pengguna dapat menaikkan hak aksesnya sendiri. Akun publik harus mendapat role user dari server.
-
-## 6. Tambahkan role di proyek latihan
-
-Jalur: Latihan
-
-Tambahan bonus ini memperkenalkan role. Kode materi utama di ekstensi tetap asli.
 
 ### Buat migration tambahan
 
@@ -324,19 +319,6 @@ $admin->save();
 
 Gunakan akun admin latihan dari seeder materi utama. Jika email berbeda, sesuaikan email pencarian. Role ditetapkan dari lingkungan pengelola, bukan dari register publik.
 
-### Checklist latihan
-
-- [ ] Kolom users.role ada tepat sekali.
-- [ ] Akun register baru mempunyai role user.
-- [ ] Akun admin latihan mempunyai role admin.
-- [ ] Keluar dari Tinker sebelum menjalankan command terminal lain.
-
-## 7. Batasi halaman admin dari server
-
-Jalur: Latihan
-
-Buat aturan admin sekali, lalu terapkan pada route yang hanya boleh diakses admin.
-
 ### Import yang diperlukan
 
 Lokasi: app/Providers/AppServiceProvider.php · bagian use di atas class
@@ -404,16 +386,41 @@ Pada controller register, letakkan return ini setelah akun dibuat dan Auth::logi
 
 ### Checklist latihan
 
+- [ ] Register user baru berhasil.
+- [ ] Email yang sama ditolak saat register lagi.
+- [ ] Login dengan password salah ditolak.
+- [ ] Logout membuat halaman yang butuh login tidak bisa diakses langsung.
+- [ ] Kolom users.role ada tepat sekali.
+- [ ] Akun register baru mempunyai role user.
+- [ ] Akun admin latihan mempunyai role admin.
+- [ ] Keluar dari Tinker sebelum menjalankan command terminal lain.
 - [ ] Admin bisa membuka /dashboard dan /admin/foods.
 - [ ] User biasa mendapat 403 ketika membuka URL admin langsung.
 - [ ] Pengunjung belum login diarahkan ke login.
 - [ ] User biasa setelah login/register diarahkan ke katalog.
 
-## 8. Latihan CRUD food dari modul utama
+## Soal 2 · CRUD food dan CRUD user
 
 Jalur: Latihan
 
-Gunakan implementasi lengkap yang sudah ada, lalu buktikan setiap operasi melalui browser.
+### Soal latihan
+
+Buat fitur tambah, tampilkan, edit, dan hapus makanan serta akun user. Hanya admin yang dapat mengelola data tersebut. Sertakan validasi input dan jangan menyimpan password sebagai teks asli.
+
+### Langkah pengerjaan
+
+1. Selesaikan autentikasi, role, dan Gate pada soal 1 agar route CRUD dapat dibatasi untuk admin.
+2. Untuk CRUD food, gunakan model/migration/seeder modul 1, FoodController modul 2 step 4, serta tiga view modul 2 step 5. Tempatkan route resource foods pada group admin.
+3. Uji tambah, baca, edit, dan hapus satu menu latihan. Controller, model, view, dan route harus saling terhubung.
+4. Buat Admin/UserController dengan command resource pada jawaban. Ganti isi file controller baru menggunakan jawaban di bawah.
+5. Tambahkan import UserController dan route resource admin.users satu kali di dalam group admin.
+6. Buat folder resources/views/admin/users, lalu buat index.blade.php, create.blade.php, dan edit.blade.php sesuai jawaban.
+7. Buka /admin/users sebagai admin. Tambah akun latihan, edit tanpa mengisi password untuk menguji password lama, lalu hapus akun latihan.
+8. Uji validasi email unik, password/konfirmasi, larangan mengubah akun admin, serta penolakan akses CRUD dari user biasa.
+
+### Jawaban / contoh penyelesaian
+
+Jawaban CRUD food berikut disalin dari kode asli modul utama, dengan lokasi penerapan tiap potongan. Jawaban CRUD user mencakup controller, route, dan tiga view. Pemetaan operasinya: store = tambah, index = tampilkan, update = edit, destroy = hapus.
 
 ### Urutan berkas
 
@@ -437,20 +444,276 @@ storage:link menghubungkan file gambar ke folder public. Form upload perlu multi
 
 Bisa menjelaskan perjalanan input dari form, validasi controller, penyimpanan model, sampai daftar diperbarui. Jangan hanya menghafal nama tombol.
 
-### Checklist latihan
+### Jawaban CRUD food · Tambahkan import Storage di atas class
 
-- [ ] Tambah Menu Bonus dengan harga 12000.
-- [ ] Cari menu itu di daftar setelah refresh.
-- [ ] Edit menjadi 15000; refresh dan pastikan nilai tersimpan.
-- [ ] Coba harga negatif; harus ditolak validasi.
-- [ ] Hapus hanya menu latihan tersebut.
-- [ ] Coba URL CRUD sebagai user biasa; akses admin harus ditolak.
+Lokasi: app/Http/Controllers/FoodController.php · Tambahkan import di bagian use di atas deklarasi class; jangan di dalam method.
 
-## 9. CRUD user: controller dan route
+```php
+use Illuminate\Support\Facades\Storage;
+```
 
-Jalur: Latihan
+Disalin dari jawaban kode asli modul utama. FoodController menangani daftar, tambah, edit, hapus menu dan penyimpanan gambar.
 
-Contoh tambahan untuk admin mengelola akun user biasa. Prasyarat: role dan Gate dari bonus sebelumnya.
+### Jawaban CRUD food · Ganti isi method index()
+
+Lokasi: app/Http/Controllers/FoodController.php · Ganti isi method index(), pertahankan deklarasi method dan kurungnya.
+
+```php
+$foods = Food::latest()->paginate(10);
+return view('admin.foods.index', compact('foods'));
+```
+
+Disalin dari jawaban kode asli modul utama. FoodController menangani daftar, tambah, edit, hapus menu dan penyimpanan gambar.
+
+### Jawaban CRUD food · Ganti isi method create()
+
+Lokasi: app/Http/Controllers/FoodController.php · Ganti isi method create(), pertahankan deklarasi method dan kurungnya.
+
+```php
+return view('admin.foods.create');
+```
+
+Disalin dari jawaban kode asli modul utama. FoodController menangani daftar, tambah, edit, hapus menu dan penyimpanan gambar.
+
+### Jawaban CRUD food · Ganti isi method store()
+
+Lokasi: app/Http/Controllers/FoodController.php · Ganti isi method store(), pertahankan deklarasi method dan kurungnya.
+
+```php
+$request->validate([
+    'name'        => 'required|string|max:255',
+    'category'    => 'required|in:Makanan,Minuman,Cemilan',
+    'price'       => 'required|numeric|min:0',
+    'description' => 'required|string',
+    'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+]);
+
+$imagePath = null;
+if ($request->hasFile('image')) {
+    $imagePath = $request->file('image')->store('foods', 'public');
+}
+
+Food::create([
+    'name'        => $request->name,
+    'category'    => $request->category,
+    'price'       => $request->price,
+    'description' => $request->description,
+    'image'       => $imagePath,
+]);
+
+return redirect()->route('foods.index')->with('success', 'Data makanan berhasil ditambahkan!');
+```
+
+Disalin dari jawaban kode asli modul utama. FoodController menangani daftar, tambah, edit, hapus menu dan penyimpanan gambar.
+
+### Jawaban CRUD food · Ganti isi method edit()
+
+Lokasi: app/Http/Controllers/FoodController.php · Ganti isi method edit(), pertahankan deklarasi method dan kurungnya.
+
+```php
+return view('admin.foods.edit', compact('food'));
+```
+
+Disalin dari jawaban kode asli modul utama. FoodController menangani daftar, tambah, edit, hapus menu dan penyimpanan gambar.
+
+### Jawaban CRUD food · Ganti isi method update()
+
+Lokasi: app/Http/Controllers/FoodController.php · Ganti isi method update(), pertahankan deklarasi method dan kurungnya.
+
+```php
+$request->validate([
+    'name'        => 'required|string|max:255',
+    'category'    => 'required|in:Makanan,Minuman,Cemilan',
+    'price'       => 'required|numeric|min:0',
+    'description' => 'required|string',
+    'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+]);
+
+$imagePath = $food->image;
+if ($request->hasFile('image')) {
+    if ($food->image && Storage::disk('public')->exists($food->image)) {
+        Storage::disk('public')->delete($food->image);
+    }
+    $imagePath = $request->file('image')->store('foods', 'public');
+}
+
+$food->update([
+    'name'        => $request->name,
+    'category'    => $request->category,
+    'price'       => $request->price,
+    'description' => $request->description,
+    'image'       => $imagePath,
+]);
+
+return redirect()->route('foods.index')->with('success', 'Data makanan berhasil diperbarui!');
+```
+
+Disalin dari jawaban kode asli modul utama. FoodController menangani daftar, tambah, edit, hapus menu dan penyimpanan gambar.
+
+### Jawaban CRUD food · Ganti isi method destroy()
+
+Lokasi: app/Http/Controllers/FoodController.php · Ganti isi method destroy(), pertahankan deklarasi method dan kurungnya.
+
+```php
+if ($food->image && Storage::disk('public')->exists($food->image)) {
+    Storage::disk('public')->delete($food->image);
+}
+$food->delete();
+
+return redirect()->route('foods.index')->with('success', 'Data makanan berhasil dihapus!');
+```
+
+Disalin dari jawaban kode asli modul utama. FoodController menangani daftar, tambah, edit, hapus menu dan penyimpanan gambar.
+
+### Jawaban CRUD food · Buat folder dan file view daftar makanan, isi seluruh file
+
+Lokasi: resources/views/admin/foods/index.blade.php · Ganti seluruh isi file view ini.
+
+```html
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Master Data Makanan</h2>
+    </x-slot>
+
+    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <a href="{{ route('foods.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4 inline-block font-semibold">+ Tambah Makanan</a>
+
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
+        @endif
+
+        <table class="w-full bg-white border mt-4 shadow-sm rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-gray-100 border-b text-gray-600 text-sm">
+                    <th class="p-3">Gambar</th>
+                    <th class="p-3">Nama</th>
+                    <th class="p-3">Kategori</th>
+                    <th class="p-3">Harga</th>
+                    <th class="p-3">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($foods as $food)
+                <tr class="border-b text-center text-sm">
+                    <td class="p-3">
+                        @if($food->image)
+                            <img src="{{ asset('storage/' . $food->image) }}" class="w-16 h-16 object-cover mx-auto rounded">
+                        @else
+                            <span class="text-gray-400 text-xs">No Image</span>
+                        @endif
+                    </td>
+                    <td class="p-3 font-semibold">{{ $food->name }}</td>
+                    <td class="p-3">{{ $food->category }}</td>
+                    <td class="p-3 font-bold text-green-600">Rp {{ number_format($food->price) }}</td>
+                    <td class="p-3">
+                        <a href="{{ route('foods.edit', $food->id) }}" class="text-blue-600 hover:underline mr-3 font-semibold">Edit</a>
+                        <form action="{{ route('foods.destroy', $food->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Yakin hapus data ini?')" class="text-red-600 hover:underline font-semibold">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="mt-4">{{ $foods->links() }}</div>
+    </div>
+</x-app-layout>
+```
+
+Disalin dari jawaban kode asli modul utama. View Blade menampilkan daftar dan formulir CRUD makanan kepada admin.
+
+### Jawaban CRUD food · Buat file view tambah makanan, isi seluruh file
+
+Lokasi: resources/views/admin/foods/create.blade.php · Ganti seluruh isi file view ini.
+
+```html
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Tambah Makanan</h2>
+    </x-slot>
+
+    <div class="py-12 max-w-2xl mx-auto sm:px-6 lg:px-8">
+        <form action="{{ route('foods.store') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-sm border">
+            @csrf
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Nama Makanan</label>
+                <input type="text" name="name" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Kategori</label>
+                <select name="category" class="w-full border rounded p-2" required>
+                    <option value="Makanan">Makanan</option>
+                    <option value="Minuman">Minuman</option>
+                    <option value="Cemilan">Cemilan</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Harga (Rp)</label>
+                <input type="number" name="price" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Deskripsi</label>
+                <textarea name="description" class="w-full border rounded p-2" rows="3" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Gambar Makanan</label>
+                <input type="file" name="image" class="w-full border rounded p-2">
+            </div>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded font-semibold">Simpan Data</button>
+        </form>
+    </div>
+</x-app-layout>
+```
+
+Disalin dari jawaban kode asli modul utama. View Blade menampilkan daftar dan formulir CRUD makanan kepada admin.
+
+### Jawaban CRUD food · Buat file view edit makanan, isi seluruh file
+
+Lokasi: resources/views/admin/foods/edit.blade.php · Ganti seluruh isi file view ini.
+
+```html
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Makanan</h2>
+    </x-slot>
+
+    <div class="py-12 max-w-2xl mx-auto sm:px-6 lg:px-8">
+        <form action="{{ route('foods.update', $food->id) }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-sm border">
+            @csrf
+            @method('PUT')
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Nama Makanan</label>
+                <input type="text" name="name" value="{{ $food->name }}" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Kategori</label>
+                <select name="category" class="w-full border rounded p-2" required>
+                    <option value="Makanan" {{ $food->category == 'Makanan' ? 'selected' : '' }}>Makanan</option>
+                    <option value="Minuman" {{ $food->category == 'Minuman' ? 'selected' : '' }}>Minuman</option>
+                    <option value="Cemilan" {{ $food->category == 'Cemilan' ? 'selected' : '' }}>Cemilan</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Harga (Rp)</label>
+                <input type="number" name="price" value="{{ $food->price }}" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Deskripsi</label>
+                <textarea name="description" class="w-full border rounded p-2" rows="3" required>{{ $food->description }}</textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Gambar Baru (Opsional)</label>
+                <input type="file" name="image" class="w-full border rounded p-2">
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded font-semibold">Update Data</button>
+        </form>
+    </div>
+</x-app-layout>
+```
+
+Disalin dari jawaban kode asli modul utama. View Blade menampilkan daftar dan formulir CRUD makanan kepada admin.
 
 ### Buat controller resource
 
@@ -569,19 +832,6 @@ Route::resource('/admin/users', UserController::class)
 
 Route names menjadi admin.users.index, admin.users.create, dan seterusnya. Parameter {user} dihubungkan ke model User lewat route model binding. Belum bisa dibuka sebelum tiga view pada bonus berikutnya dibuat.
 
-### Checklist latihan
-
-- [ ] Tidak ada route admin.users yang terdaftar dua kali.
-- [ ] Controller menolak perubahan/penghapusan akun admin.
-- [ ] Password tidak dipasang sebagai value pada form edit.
-- [ ] Role tidak diambil dari request publik.
-
-## 10. CRUD user: halaman daftar, tambah, edit
-
-Jalur: Latihan
-
-Buat tiga file Blade ini, lalu uji CRUD user memakai admin dan user biasa.
-
 ### Daftar user
 
 Lokasi: resources/views/admin/users/index.blade.php · buat folder/file dan isi seluruhnya
@@ -667,6 +917,16 @@ PUT diarahkan ke update(). Password kosong mempertahankan password sebelumnya; j
 
 ### Checklist latihan
 
+- [ ] Tambah Menu Bonus dengan harga 12000.
+- [ ] Cari menu itu di daftar setelah refresh.
+- [ ] Edit menjadi 15000; refresh dan pastikan nilai tersimpan.
+- [ ] Coba harga negatif; harus ditolak validasi.
+- [ ] Hapus hanya menu latihan tersebut.
+- [ ] Coba URL CRUD sebagai user biasa; akses admin harus ditolak.
+- [ ] Tidak ada route admin.users yang terdaftar dua kali.
+- [ ] Controller menolak perubahan/penghapusan akun admin.
+- [ ] Password tidak dipasang sebagai value pada form edit.
+- [ ] Role tidak diambil dari request publik.
 - [ ] Buka /admin/users sebagai admin.
 - [ ] Tambah user latihan dan login dengan akun baru itu.
 - [ ] Ubah nama/email melalui admin; refresh untuk memastikan tersimpan.
@@ -675,11 +935,26 @@ PUT diarahkan ke update(). Password kosong mempertahankan password sebelumnya; j
 - [ ] User biasa ditolak ketika membuka /admin/users langsung.
 - [ ] Hapus user latihan, lalu pastikan akun tersebut tidak bisa login lagi.
 
-## 11. Filter menu per kategori atau periode
+## Soal 3 · Menu per periode atau kategori
 
 Jalur: Latihan
 
-Contoh periode pada halaman ini berarti tanggal MENU DIBUAT. Periode pesanan dibahas pada rekap berikutnya.
+### Soal latihan
+
+Buat tampilan menu yang dapat difilter berdasarkan kategori atau periode. Sediakan pilihan semua kategori dan reset. Jelaskan tanggal apa yang dipakai sebagai periode.
+
+### Langkah pengerjaan
+
+1. Siapkan beberapa menu dari kategori berbeda dan catat created_at masing-masing.
+2. Coba query WHERE category untuk memahami hasil filter kategori.
+3. Coba query rentang created_at. Pada soal ini periode berarti tanggal menu dibuat, bukan tanggal pesanan.
+4. Ganti method index() katalog pada OrderController dengan jawaban filter yang memvalidasi kategori dan pasangan tanggal.
+5. Tambahkan form GET filter sebelum form checkout pada view pelanggan. Jangan menaruh satu form di dalam form lain.
+6. Uji kategori, rentang tanggal, hasil kosong, tanggal terbalik, serta tombol reset.
+
+### Jawaban / contoh penyelesaian
+
+Jawabannya memakai WHERE pada query database dan form GET. Pada Laravel, when() menambahkan kondisi hanya ketika filter diisi. Contoh query, method controller, dan form ada di bawah.
 
 ### Contoh query kategori
 
@@ -765,11 +1040,26 @@ GET menaruh filter pada URL sehingga hasil bisa dibuka ulang. Form filter tidak 
 - [ ] Tanggal akhir sebelum awal harus ditolak.
 - [ ] Jelaskan bahwa created_at makanan bukan tanggal makanan dipesan.
 
-## 12. Rekapan menu yang diorder
+## Soal 4 · Rekapan menu yang diorder
 
 Jalur: Latihan
 
-Gabungkan pesanan dan detail untuk menghitung jumlah menu. Hitung omzet dari orders agar total pesanan tidak terhitung berulang.
+### Soal latihan
+
+Tampilkan jumlah tiap menu yang sudah diorder dalam rentang tanggal. Sertakan rekap jumlah pesanan dan omzet harian bila diminta. Pisahkan pesanan selesai dari pending/batal.
+
+### Langkah pengerjaan
+
+1. Siapkan pesanan latihan yang konsisten, masing-masing memiliki detail makanan dan quantity. Pastikan checkout/data latihan sudah valid.
+2. Tentukan periode menggunakan orders.created_at dan tetapkan status completed/selesai yang masuk perhitungan.
+3. Gunakan JOIN orders, order_details, dan foods lalu SUM(quantity) dan GROUP BY menu untuk menjawab jumlah menu dipesan.
+4. Untuk omzet harian, hitung COUNT dan SUM(total_price) langsung dari orders agar satu pesanan tidak terhitung berulang akibat JOIN detail.
+5. Tambahkan method report() dan route laporan pada group admin. Buat view admin/reports/menus.blade.php dari jawaban.
+6. Buka /admin/reports/menus, isi tanggal, dan bandingkan hasilnya dengan hitungan manual. Uji pending/batal serta data di luar periode.
+
+### Jawaban / contoh penyelesaian
+
+Jumlah porsi dijawab dengan SUM(order_details.quantity), bukan COUNT baris detail. Omzet dijawab dengan SUM(orders.total_price) sekali per pesanan selesai. Query SQL serta contoh controller, route, dan view ada di bawah.
 
 ### Jumlah tiap menu yang selesai dipesan dalam Oktober
 
@@ -897,14 +1187,6 @@ Checkout materi asli masih memiliki perbedaan price/subtotal yang sudah dicatat.
 - [ ] Cocokkan jumlah menu dengan penjumlahan manual detail.
 - [ ] Cocokkan omzet harian dengan total_price tiap pesanan selesai, dihitung sekali per pesanan.
 - [ ] User biasa ditolak saat membuka URL laporan admin.
-
-**Kenapa rekap jumlah menu memakai SUM(quantity), bukan COUNT(*)?**
-
-Satu baris detail dapat berisi beberapa porsi. COUNT menghitung baris detail; SUM(quantity) menghitung jumlah porsi.
-
-**Apakah jumlah terjual sama dengan omzet?**
-
-Tidak. Jumlah terjual adalah banyak item; omzet adalah nilai uang dari transaksi yang masuk perhitungan.
 
 ## Referensi
 

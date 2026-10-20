@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const steps = require('../data/steps.json');
 const notes = require('../data/notes.json');
 const bonus = require('../data/bonus.json');
-const { boundedIndex, advance, planEdit, methodBounds } = require('./engine');
+const { boundedIndex, advance, planEdit, methodBounds, bonusProgress } = require('./engine');
 
 class Guide {
   constructor(context) {
@@ -23,7 +23,8 @@ class Guide {
   get catalog() { return this.track === 'bonus' ? bonus : steps; }
   get key() { return 'progress:' + (this.root || 'no-project') + (this.track === 'bonus' ? ':bonus' : ''); }
   get state() {
-    const saved = this.context.workspaceState.get(this.key, { index: 0, completed: [] });
+    const stored = this.context.workspaceState.get(this.key, { index: 0, completed: [] });
+    const saved = this.track === 'bonus' ? bonusProgress(stored) : stored;
     return { index: boundedIndex(saved.index, this.catalog.length), completed: Array.isArray(saved.completed) ? saved.completed.filter(x => Number.isInteger(x) && x >= 0 && x < this.catalog.length) : [] };
   }
   get step() { return this.catalog[this.state.index]; }
@@ -35,7 +36,7 @@ class Guide {
     return uri;
   }
   async save(state) {
-    await this.context.workspaceState.update(this.key, state);
+    await this.context.workspaceState.update(this.key, this.track === 'bonus' ? { ...state, format: 'four-exercises' } : state);
     this.pending = null;
     await this.render();
   }

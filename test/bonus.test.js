@@ -6,15 +6,17 @@ const bonus = require('../data/bonus.json');
 const steps = require('../data/steps.json');
 const byId = id => bonus.find(x => x.id === 'bonus-' + id);
 
-test('bonus has 4 theory chapters and 8 guided practice chapters, with no overlap with source steps', () => {
-  assert.equal(bonus.length, 12);
+test('bonus has exactly 4 theories and 4 exercises matching the teachers topics', () => {
+  assert.equal(bonus.length, 8);
   assert.equal(bonus.filter(x => x.group === 'Teori').length, 4);
-  assert.equal(bonus.filter(x => x.group === 'Latihan').length, 8);
-  assert.equal(new Set(bonus.map(x => x.id)).size, 12);
+  assert.equal(bonus.filter(x => x.group === 'Latihan').length, 4);
+  assert.equal(new Set(bonus.map(x => x.id)).size, 8);
   for (const item of bonus) {
     assert.equal(item.mode, 'bonus');
     assert.ok(!steps.some(x => x.id === item.id));
     assert.ok(item.blocks.length && item.checklist.length);
+    assert.ok(item.answerSummary);
+    if (item.group === 'Latihan') { assert.ok(item.question); assert.ok(item.procedure.length >= 6); }
     for (const block of item.blocks.filter(x => x.code)) assert.ok(block.language && block.target && block.explanation);
   }
   assert.equal(steps.length, 55);
@@ -51,11 +53,23 @@ test('report SQL excludes pending, cancelled, and out-of-period orders and does 
   } finally { db.close(); }
 });
 test('user CRUD teaches validation, password hashing, server-set role and guarded admin routes', () => {
-  const lesson = byId('crud-user-controller');
-  const controller = lesson.blocks.find(x => x.code?.startsWith('<?php')).code;
+  const lesson = byId('latihan-crud');
+  const controller = lesson.blocks.find(x => x.code?.includes('class UserController')).code;
   assert.ok(controller.includes("$user->role = 'user'"));
   assert.ok(controller.includes('Hash::make'));
   assert.ok(controller.includes("$request->filled('password')"));
   assert.ok(!controller.includes('$request->all()'));
-  assert.ok(byId('gate').blocks.some(x => x.code?.includes("['auth', 'can:manage-admin']")));
+  assert.ok(byId('latihan-login').blocks.some(x => x.code?.includes("['auth', 'can:manage-admin']")));
+});
+test('old 12-chapter progress maps to the matching exercise without prematurely completing combined work', () => {
+  const { bonusProgress } = require('../src/engine');
+  assert.deepEqual(bonusProgress({ index: 10, completed: [4, 5] }), { index: 6, completed: [], format: 'four-exercises' });
+  assert.deepEqual(bonusProgress({ index: 9, completed: [4, 5, 6, 7, 8, 9] }), { index: 5, completed: [4, 5], format: 'four-exercises' });
+  const current = { index: 7, completed: [6], format: 'four-exercises' };
+  assert.deepEqual(bonusProgress(current), current);
+});
+test('food answers in the CRUD exercise preserve every original controller and view snippet', () => {
+  const answers = byId('latihan-crud').blocks.filter(x => x.heading.startsWith('Jawaban CRUD food'));
+  const original = steps.filter(x => x.module === 2 && [4, 5].includes(x.step));
+  assert.deepEqual(answers.map(x => x.code), original.map(x => x.code));
 });

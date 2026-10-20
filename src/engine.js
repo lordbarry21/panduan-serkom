@@ -124,5 +124,11 @@ function advance(state, count) {
   const completed = new Set(state.completed || []); completed.add(boundedIndex(state.index, count));
   return { ...state, index: boundedIndex(state.index + 1, count), completed: [...completed].sort((a, b) => a - b) };
 }
+function bonusProgress(saved) {
+  if (saved.format === 'four-exercises') return saved;
+  const groups = [[0], [1], [2], [3], [4, 5, 6], [7, 8, 9], [10], [11]];
+  const previous = new Set(saved.completed || []);
+  return { index: Math.max(0, groups.findIndex(group => group.includes(saved.index))), completed: groups.map((group, index) => group.every(value => previous.has(value)) ? index : -1).filter(index => index >= 0), format: 'four-exercises' };
+}
 
-module.exports = { normalize, maskPhp, methodBounds, classBounds, planEdit, boundedIndex, advance };
+module.exports = { normalize, maskPhp, methodBounds, classBounds, planEdit, boundedIndex, advance, bonusProgress };

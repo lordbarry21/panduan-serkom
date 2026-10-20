@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+- Bonus mengikuti kisi-kisi tepat 4 bagian teori dan 4 soal latihan.
+- Setiap latihan mempunyai Soal, Langkah pengerjaan, Jawaban/contoh penyelesaian, serta checklist hasil.
+- Jawaban CRUD food ikut ditampilkan dari kode asli modul utama; CRUD user tetap dilengkapi controller, route, dan view.
+- Progres bonus dari susunan 12 bab dipetakan ke susunan baru tanpa mengubah progres utama.
+
 ## 1.2.0
 
 - Tab Bonus kisi-kisi berisi 12 bab: 4 teori dan 8 latihan.

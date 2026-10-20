@@ -58,9 +58,17 @@ function drawMap() {
 function renderBonus(data) {
   const { step, state, busy } = data;
   el('bonusLesson').setAttribute('aria-busy', String(busy));
-  el('bonusEyebrow').textContent = `Bonus · ${step.group} · Bab ${state.index + 1}`;
+  el('bonusEyebrow').textContent = `Bonus · ${step.group} ${step.number}`;
   el('bonusTitle').textContent = step.title;
   el('bonusSummary').textContent = step.summary;
+  el('bonusSummary').hidden = !!step.question;
+  el('bonusQuestionSection').hidden = !step.question;
+  el('bonusProcedureSection').hidden = !step.procedure?.length;
+  el('bonusQuestion').textContent = step.question || '';
+  el('bonusProcedure').replaceChildren();
+  for (const text of step.procedure || []) { const li = document.createElement('li'); li.textContent = text; el('bonusProcedure').append(li); }
+  el('bonusAnswerLabel').textContent = step.group === 'Teori' ? 'Pengertian / jawaban singkat' : 'Jawaban / contoh penyelesaian';
+  el('bonusAnswerSummary').textContent = step.answerSummary;
   el('bonusDone').hidden = !state.completed.includes(state.index);
   el('bonusBlocks').replaceChildren();
   step.blocks.forEach((block, index) => {

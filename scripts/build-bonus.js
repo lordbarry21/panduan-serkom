@@ -333,10 +333,81 @@ lesson('rekap', 'Latihan', 'Rekapan menu yang diorder', 'Gabungkan pesanan dan d
 ], ['Buat pesanan latihan dengan dua menu dan jumlah berbeda.', 'Tandai satu pesanan completed dan satu lainnya pending.', 'Rekap hanya memasukkan pesanan completed/selesai pada rentang tanggal.', 'Cocokkan jumlah menu dengan penjumlahan manual detail.', 'Cocokkan omzet harian dengan total_price tiap pesanan selesai, dihitung sekali per pesanan.', 'User biasa ditolak saat membuka URL laporan admin.'], [{ q: 'Kenapa rekap jumlah menu memakai SUM(quantity), bukan COUNT(*)?', a: 'Satu baris detail dapat berisi beberapa porsi. COUNT menghitung baris detail; SUM(quantity) menghitung jumlah porsi.' }, { q: 'Apakah jumlah terjual sama dengan omzet?', a: 'Tidak. Jumlah terjual adalah banyak item; omzet adalah nilai uang dari transaksi yang masuk perhitungan.' }]);
 
 const root = path.resolve(__dirname, '..');
-fs.writeFileSync(path.join(root, 'data/bonus.json'), JSON.stringify(lessons, null, 2) + '\n');
+const byId = id => lessons.find(item => item.id === 'bonus-' + id);
+const mainSteps = require('../data/steps.json');
+const theoryAnswers = [
+  'Tools utama: VS Code untuk menulis kode, PHP untuk menjalankan backend, Laravel sebagai framework, Composer untuk paket PHP, MySQL untuk database, serta Node.js/npm untuk tooling frontend. Browser dipakai untuk menguji hasil.',
+  'ERD adalah diagram rancangan entitas, atribut, dan relasi. Database adalah tempat penyimpanan/pengelolaan data sebenarnya. ERD membantu menentukan struktur tabel; primary key membedakan record dan foreign key menghubungkan tabel.',
+  'CRUD berarti Create, Read, Update, Delete. Dalam SQL MySQL: tambah memakai INSERT, tampilkan memakai SELECT, edit memakai UPDATE, dan hapus memakai DELETE. WHERE membatasi record yang diproses.',
+  'Query adalah permintaan/perintah ke database. Manfaatnya untuk membaca, menyaring, mengurutkan, menambah, mengubah, menghapus, dan membuat rekap data secara terukur tanpa menghitung manual.'
+];
+const sections = lessons.slice(0, 4).map((item, index) => ({ ...item, number: index + 1, answerSummary: theoryAnswers[index], qa: [] }));
+function exercise(id, number, title, question, procedure, answerSummary, sourceIds) {
+  const items = sourceIds.map(byId);
+  const blocks = items.flatMap(item => {
+    if (item.id !== 'bonus-crud-food') return item.blocks;
+    const originalFood = mainSteps.filter(step => step.module === 2 && [4, 5].includes(step.step)).map(step => ({ heading: 'Jawaban CRUD food · ' + step.title, language: step.step === 5 ? 'html' : 'php', target: step.target + ' · ' + step.where, code: step.code, explanation: 'Disalin dari jawaban kode asli modul utama. ' + step.goal }));
+    return [...item.blocks, ...originalFood];
+  });
+  sections.push({ id, index: sections.length, number, module: 'bonus', group: 'Latihan', step: number, part: 1, mode: 'bonus', title, summary: question, question, procedure, answerSummary, blocks, checklist: items.flatMap(item => item.checklist), qa: [] });
+}
+exercise('bonus-latihan-login', 1, 'Soal 1 · Login dan register admin/user',
+  'Buat halaman login dan register. Akun user dapat membuka katalog, sedangkan akun admin dapat mengakses dashboard dan halaman pengelolaan. User biasa tidak boleh membuka URL admin secara langsung.',
+  [
+    'Siapkan database/proyek latihan. Pasang dan jalankan Breeze sesuai modul 2 step 1–3, lalu coba halaman /register dan /login.',
+    'Buat migration baru untuk kolom users.role dengan default user, isi migration memakai jawaban di bawah, lalu jalankan php artisan migrate.',
+    'Tetapkan role admin pada akun seeder latihan melalui Tinker. Akun register publik tetap mendapatkan role user.',
+    'Tambahkan import dan Gate manage-admin pada AppServiceProvider.boot().',
+    'Ganti route dashboard dan pindahkan route admin ke group auth dan can:manage-admin. Jangan menduplikasi route.',
+    'Atur redirect sukses login/register: admin ke dashboard, user ke katalog, dengan tetap mempertahankan validasi dan proses autentikasi Breeze.',
+    'Uji register/login/logout, password salah, dan akses langsung URL admin memakai user biasa.'
+  ],
+  'Jawabannya memakai autentikasi Breeze ditambah kolom role dan Gate di server. Login memeriksa identitas; Gate membatasi hak akses. Kode lengkap penambahan role, Gate, route, dan redirect ada di bawah.',
+  ['login', 'role', 'gate']);
+exercise('bonus-latihan-crud', 2, 'Soal 2 · CRUD food dan CRUD user',
+  'Buat fitur tambah, tampilkan, edit, dan hapus makanan serta akun user. Hanya admin yang dapat mengelola data tersebut. Sertakan validasi input dan jangan menyimpan password sebagai teks asli.',
+  [
+    'Selesaikan autentikasi, role, dan Gate pada soal 1 agar route CRUD dapat dibatasi untuk admin.',
+    'Untuk CRUD food, gunakan model/migration/seeder modul 1, FoodController modul 2 step 4, serta tiga view modul 2 step 5. Tempatkan route resource foods pada group admin.',
+    'Uji tambah, baca, edit, dan hapus satu menu latihan. Controller, model, view, dan route harus saling terhubung.',
+    'Buat Admin/UserController dengan command resource pada jawaban. Ganti isi file controller baru menggunakan jawaban di bawah.',
+    'Tambahkan import UserController dan route resource admin.users satu kali di dalam group admin.',
+    'Buat folder resources/views/admin/users, lalu buat index.blade.php, create.blade.php, dan edit.blade.php sesuai jawaban.',
+    'Buka /admin/users sebagai admin. Tambah akun latihan, edit tanpa mengisi password untuk menguji password lama, lalu hapus akun latihan.',
+    'Uji validasi email unik, password/konfirmasi, larangan mengubah akun admin, serta penolakan akses CRUD dari user biasa.'
+  ],
+  'Jawaban CRUD food berikut disalin dari kode asli modul utama, dengan lokasi penerapan tiap potongan. Jawaban CRUD user mencakup controller, route, dan tiga view. Pemetaan operasinya: store = tambah, index = tampilkan, update = edit, destroy = hapus.',
+  ['crud-food', 'crud-user-controller', 'crud-user-views']);
+exercise('bonus-filter', 3, 'Soal 3 · Menu per periode atau kategori',
+  'Buat tampilan menu yang dapat difilter berdasarkan kategori atau periode. Sediakan pilihan semua kategori dan reset. Jelaskan tanggal apa yang dipakai sebagai periode.',
+  [
+    'Siapkan beberapa menu dari kategori berbeda dan catat created_at masing-masing.',
+    'Coba query WHERE category untuk memahami hasil filter kategori.',
+    'Coba query rentang created_at. Pada soal ini periode berarti tanggal menu dibuat, bukan tanggal pesanan.',
+    'Ganti method index() katalog pada OrderController dengan jawaban filter yang memvalidasi kategori dan pasangan tanggal.',
+    'Tambahkan form GET filter sebelum form checkout pada view pelanggan. Jangan menaruh satu form di dalam form lain.',
+    'Uji kategori, rentang tanggal, hasil kosong, tanggal terbalik, serta tombol reset.'
+  ],
+  'Jawabannya memakai WHERE pada query database dan form GET. Pada Laravel, when() menambahkan kondisi hanya ketika filter diisi. Contoh query, method controller, dan form ada di bawah.',
+  ['filter']);
+exercise('bonus-rekap', 4, 'Soal 4 · Rekapan menu yang diorder',
+  'Tampilkan jumlah tiap menu yang sudah diorder dalam rentang tanggal. Sertakan rekap jumlah pesanan dan omzet harian bila diminta. Pisahkan pesanan selesai dari pending/batal.',
+  [
+    'Siapkan pesanan latihan yang konsisten, masing-masing memiliki detail makanan dan quantity. Pastikan checkout/data latihan sudah valid.',
+    'Tentukan periode menggunakan orders.created_at dan tetapkan status completed/selesai yang masuk perhitungan.',
+    'Gunakan JOIN orders, order_details, dan foods lalu SUM(quantity) dan GROUP BY menu untuk menjawab jumlah menu dipesan.',
+    'Untuk omzet harian, hitung COUNT dan SUM(total_price) langsung dari orders agar satu pesanan tidak terhitung berulang akibat JOIN detail.',
+    'Tambahkan method report() dan route laporan pada group admin. Buat view admin/reports/menus.blade.php dari jawaban.',
+    'Buka /admin/reports/menus, isi tanggal, dan bandingkan hasilnya dengan hitungan manual. Uji pending/batal serta data di luar periode.'
+  ],
+  'Jumlah porsi dijawab dengan SUM(order_details.quantity), bukan COUNT baris detail. Omzet dijawab dengan SUM(orders.total_price) sekali per pesanan selesai. Query SQL serta contoh controller, route, dan view ada di bawah.',
+  ['rekap']);
+fs.writeFileSync(path.join(root, 'data/bonus.json'), JSON.stringify(sections, null, 2) + '\n');
 const md = ['# Bonus — Kisi-kisi Serkom', '', 'Materi tambahan untuk belajar teori dan latihan. Contoh bonus tidak berasal dari pesanmakan.md dan tidak mengubah 55 langkah asli. Contoh kode perlu diterapkan sendiri pada proyek latihan setelah prasyaratnya selesai.', ''];
-for (const item of lessons) {
-  md.push(`## ${item.index + 1}. ${item.title}`, '', `Jalur: ${item.group}`, '', item.summary, '');
+for (const item of sections) {
+  md.push(`## ${item.group === 'Teori' ? `Teori ${item.number} · ` : ''}${item.title}`, '', `Jalur: ${item.group}`, '');
+  if (item.question) md.push('### Soal latihan', '', item.question, '', '### Langkah pengerjaan', '', ...item.procedure.map((step, index) => `${index + 1}. ${step}`), '');
+  md.push(item.group === 'Teori' ? '### Pengertian / jawaban singkat' : '### Jawaban / contoh penyelesaian', '', item.answerSummary, '');
   for (const block of item.blocks) {
     md.push('### ' + block.heading, '');
     if (block.text) md.push(block.text, '');
@@ -348,4 +419,4 @@ for (const item of lessons) {
 }
 md.push('## Referensi', '', '- [MySQL: SELECT](https://dev.mysql.com/doc/refman/8.4/en/select.html)', '- [MySQL: INSERT](https://dev.mysql.com/doc/refman/8.4/en/insert.html)', '- [MySQL: UPDATE](https://dev.mysql.com/doc/refman/8.4/en/update.html)', '- [MySQL: DELETE](https://dev.mysql.com/doc/refman/8.4/en/delete.html)', '- [Laravel: Authorization/Gates](https://laravel.com/docs/12.x/authorization)', '- [Laravel: Hashing](https://laravel.com/docs/12.x/hashing)', '');
 fs.writeFileSync(path.join(root, 'data/bonus-kisi-kisi.md'), md.join('\n'));
-console.log(`${lessons.length} bab bonus dibuat, terpisah dari materi utama.`);
+console.log('Bonus: 4 teori dan 4 soal latihan, masing-masing dengan langkah pengerjaan dan jawaban.');

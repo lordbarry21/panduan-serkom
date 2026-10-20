@@ -73,7 +73,7 @@ async function run() {
   } finally { await vscode.env.clipboard.writeText(clipboard); }
   const originalMain = guide.state;
   await guide.receive({ type: 'track', track: 'bonus' });
-  assert.equal(guide.catalog.length, 12);
+  assert.equal(guide.catalog.length, 8);
   assert.equal(guide.state.index, 0);
   await guide.next();
   assert.equal(guide.state.index, 1);
@@ -92,6 +92,6 @@ async function run() {
   await assert.rejects(() => guide.bonusBlock({ type: 'bonusCopy', lessonId: 'wrong', block: blockIndex }), /Buka ulang/);
   await assert.rejects(() => guide.prepareEdit(), /diterapkan manual/);
   await guide.receive({ type: 'track', track: 'main' });
-  fs.writeFileSync(process.env.SERKOM_HOST_REPORT, JSON.stringify({ ok: true, steps: 55, bonusChapters: 12, actualVSCodeHost: true, previewNonMutating: true, applyCorrect: true, stalePreviewBlocked: true, progressIsolated: true, explanationLineNavigation: true, clipboardCodeExact: true, bonusProgressIndependent: true, bonusCopyExact: true, bonusRejectsAutomaticEdits: true }, null, 2));
+  fs.writeFileSync(process.env.SERKOM_HOST_REPORT, JSON.stringify({ ok: true, steps: 55, bonusTheories: 4, bonusExercises: 4, actualVSCodeHost: true, previewNonMutating: true, applyCorrect: true, stalePreviewBlocked: true, progressIsolated: true, explanationLineNavigation: true, clipboardCodeExact: true, bonusProgressIndependent: true, bonusCopyExact: true, bonusRejectsAutomaticEdits: true }, null, 2));
 }
 module.exports = { run };

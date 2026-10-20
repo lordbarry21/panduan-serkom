@@ -126,8 +126,8 @@ const server = http.createServer((req, res) => {
   await page.waitForFunction(() => !document.getElementById('bonusLesson').hidden);
   assert.equal(await page.locator('#lesson').isVisible(), false);
   assert.equal(await page.locator('#moduleFilter').isVisible(), false);
-  assert.equal(await page.locator('#stepList button').count(), 12);
-  assert.equal(await page.locator('#progress').getAttribute('max'), '12');
+  assert.equal(await page.locator('#stepList button').count(), 8);
+  assert.equal(await page.locator('#progress').getAttribute('max'), '8');
   await page.locator('#search').fill('crud-sql');
   assert.equal(await page.locator('#stepList button').count(), 1);
   await page.locator('#stepList button').click();
@@ -148,7 +148,16 @@ const server = http.createServer((req, res) => {
     await page.waitForFunction(title => document.getElementById('bonusTitle').textContent === title, bonus[index].title);
     assert.deepEqual(await page.locator('#bonusBlocks pre').allTextContents(), bonus[index].blocks.filter(x => x.code).map(x => x.code));
     assert.equal(await page.locator('#bonusChecklist li').count(), bonus[index].checklist.length);
+    if (bonus[index].group === 'Latihan') {
+      assert.equal(await page.locator('#bonusQuestion').textContent(), bonus[index].question);
+      assert.deepEqual(await page.locator('#bonusProcedure li').allTextContents(), bonus[index].procedure);
+      assert.equal(await page.locator('#bonusAnswerLabel').textContent(), 'Jawaban / contoh penyelesaian');
+    }
   }
+  state.index = 4;
+  await page.evaluate(data => window.postMessage(data, '*'), data());
+  await page.waitForFunction(() => document.getElementById('bonusTitle').textContent.includes('Soal 1'));
+  await page.screenshot({ path: path.join(output, 'bonus-soal-latihan.png'), fullPage: true });
   for (const width of [260, 360, 700]) {
     await page.setViewportSize({ width, height: 1000 });
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'bonus has no horizontal page overflow at ' + width);
@@ -164,6 +173,6 @@ const server = http.createServer((req, res) => {
   await page.screenshot({ path: path.join(output, 'ui-light.png'), fullPage: true });
   for (const expected of ['terminal', 'copy', 'code', 'project', 'next', 'previous', 'jump', 'open', 'preview', 'cancel', 'apply', 'source', 'reset']) assert.ok(messages.some(x => x.type === expected), expected);
   assert.deepEqual(errors, []);
-  fs.writeFileSync(path.join(output, 'ui-report.json'), JSON.stringify({ ok: true, all55CodeBlocksExact: true, selectiveExplanations: true, explanationLineNavigation: true, buttonsChecked: 13, bonusChapters: 12, allBonusBlocksExact: true, bonusNavigationAndCopy: true, mainProgressPreserved: true, moduleFilters: ['all', 0, 1, 2, 3, 4], combinedSearch: true, filterPersistence: true, clearFilters: true, mapSearchAndEmptyState: true, widths: [260, 360, 700], themes: ['dark', 'light'], consoleErrors: errors }, null, 2));
+  fs.writeFileSync(path.join(output, 'ui-report.json'), JSON.stringify({ ok: true, all55CodeBlocksExact: true, selectiveExplanations: true, explanationLineNavigation: true, buttonsChecked: 13, bonusTheories: 4, bonusExercises: 4, exerciseQuestionStepsAndAnswer: true, allBonusBlocksExact: true, bonusNavigationAndCopy: true, mainProgressPreserved: true, moduleFilters: ['all', 0, 1, 2, 3, 4], combinedSearch: true, filterPersistence: true, clearFilters: true, mapSearchAndEmptyState: true, widths: [260, 360, 700], themes: ['dark', 'light'], consoleErrors: errors }, null, 2));
   await browser.close(); server.close(); console.log('PASS: UI buttons, search, 55 exact code blocks, 3 widths, dark/light themes.');
 })().catch(error => { console.error(error); server.close(); process.exit(1); });
