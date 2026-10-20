@@ -24,7 +24,7 @@ code --install-extension .\panduan-serkom-1.1.0.vsix
 
 Ini ekstensi untuk **VS Code**, bukan Visual Studio. Paket ini didistribusikan melalui GitHub Releases dan belum diterbitkan di Visual Studio Marketplace.
 
-## Memasang dari USB di PC kantor
+## Memasang dari USB ke device lain
 
 1. Salin file `.vsix` ke USB. Unduh juga `PASANG-PANDUAN.cmd` dari rilis jika ingin memakai pemasang Windows.
 2. Letakkan `.cmd` dan `.vsix` versi yang sama di satu folder.
