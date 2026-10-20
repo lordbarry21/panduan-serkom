@@ -139,4 +139,4 @@ scripts/    Pembuatan paket VSIX dan pemasang
 docs/       Gambar dan catatan rilis
 ```
 
-Dibuat untuk alur belajar **Bari Achmad**.
+Dibuat untuk alur belajar.
