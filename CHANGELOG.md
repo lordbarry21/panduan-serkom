@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.0 (lokal)
+## 1.3.0
 
 - Tambah variasi laundry baju, pesan tiket film, dan perpustakaan dari 55 langkah pesanmakan.
 - Pilihan variasi dalam panel yang sama, beserta bonus, penjelasan, salin kode, dan pratinjau edit.

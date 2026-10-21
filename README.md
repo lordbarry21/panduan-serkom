@@ -2,9 +2,9 @@
 
 Pendamping belajar Laravel di dalam Visual Studio Code. Ikuti 55 langkah dari persiapan sampai database, login, CRUD menu, pemesanan pelanggan, dashboard, dan route.
 
-Versi lokal **1.3.0** menambahkan pilihan **Pesan makan**, **Laundry baju**, **Pesan tiket film**, dan **Perpustakaan** di dropdown **Pilih variasi proyek**. Tiap variasi mengikuti 55 langkah dan bonus yang sama. Command beserta flag, struktur kode, kelas tampilan, dan urutan pengerjaan mengikuti pesanmakan; nama proyek, model, tabel, kategori, data contoh, dan label disesuaikan. CSS panel dan mesin penyisipan tetap sama. Progres materi utama dan bonus dipisahkan per variasi dan folder, serta progres pesanmakan sebelumnya tetap terbaca.
+Versi **1.3.0** menambahkan pilihan **Pesan makan**, **Laundry baju**, **Pesan tiket film**, dan **Perpustakaan** di dropdown **Pilih variasi proyek**. Tiap variasi mengikuti 55 langkah dan bonus yang sama. Command beserta flag, struktur kode, kelas tampilan, dan urutan pengerjaan mengikuti pesanmakan; nama proyek, model, tabel, kategori, data contoh, dan label disesuaikan. CSS panel dan mesin penyisipan tetap sama. Progres materi utama dan bonus dipisahkan per variasi dan folder, serta progres pesanmakan sebelumnya tetap terbaca.
 
-Untuk memasang hasil build lokal, jalankan `code --install-extension .\dist\panduan-serkom-1.3.0.vsix --force`. Buka **Serkom: Buka Panduan** atau **Ctrl+Alt+Shift+S**, lalu pilih variasi. Bila panel versi lama masih terbuka, jalankan **Developer: Reload Window** sekali. Paket 1.3.0 ini dibuat lokal; petunjuk rilis GitHub di bawah merujuk rilis upstream.
+Untuk memasang hasil build lokal, jalankan `code --install-extension .\dist\panduan-serkom-1.3.0.vsix --force`. Paket siap pasang tersedia di [rilis v1.3.0](https://github.com/lordbarry21/panduan-serkom/releases/tag/v1.3.0). Buka **Serkom: Buka Panduan** atau **Ctrl+Alt+Shift+S**, lalu pilih variasi. Bila panel versi lama masih terbuka, jalankan **Developer: Reload Window** sekali.
 
 Setiap langkah menunjukkan **file tujuan → lokasi kode → tujuan langkah → kode asli → langkah berikutnya**. Progres disimpan per folder proyek dalam workspace VS Code yang digunakan.
 
@@ -13,7 +13,7 @@ Setiap langkah menunjukkan **file tujuan → lokasi kode → tujuan langkah → 
 Tidak perlu mengunduh source, menjalankan npm, atau login GitHub untuk memakai ekstensi.
 
 1. Buka [rilis terbaru](https://github.com/lordbarry21/panduan-serkom/releases/latest).
-2. Pada bagian **Assets**, unduh file **panduan-serkom-1.2.1.vsix**.
+2. Pada bagian **Assets**, unduh file **panduan-serkom-1.3.0.vsix**.
 3. Buka **Visual Studio Code** versi **1.96 atau lebih baru**.
 4. Tekan **Ctrl+Shift+P**, cari **Extensions: Install from VSIX…**.
 5. Pilih file `.vsix` yang diunduh, lalu tunggu pemasangan selesai. VS Code mungkin meminta konfirmasi kepercayaan terhadap publisher lokal.
@@ -23,7 +23,7 @@ Tidak perlu mengunduh source, menjalankan npm, atau login GitHub untuk memakai e
 Alternatif lewat terminal:
 
 ```powershell
-code --install-extension .\panduan-serkom-1.2.1.vsix
+code --install-extension .\panduan-serkom-1.3.0.vsix
 ```
 
 Ini ekstensi untuk **VS Code**, bukan Visual Studio. Paket ini didistribusikan melalui GitHub Releases dan belum diterbitkan di Visual Studio Marketplace.
