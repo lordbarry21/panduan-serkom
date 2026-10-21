@@ -8,6 +8,7 @@ const steps = require('../data/steps.json');
 const notes = require('../data/notes.json');
 const bonus = require('../data/bonus.json');
 const { advance } = require('../src/engine');
+const { getVariant } = require('../src/variants');
 const media = path.join(__dirname, '../media');
 const output = process.env.SERKOM_TEST_OUTPUT || path.join(__dirname, '../.test-output');
 fs.mkdirSync(output, { recursive: true });
@@ -29,17 +30,23 @@ const server = http.createServer((req, res) => {
 
 (async () => {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true, ...(process.env.SERKOM_BROWSER ? { executablePath: process.env.SERKOM_BROWSER } : {}) });
   const page = await browser.newPage({ viewport: { width: 360, height: 1000 }, deviceScaleFactor: 1 });
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   let state = { index: 0, completed: [] }, pending = false;
   let track = 'main';
+  let variant = 'pesanmakan';
+  const variantProgress = {};
   const progress = { main: state, bonus: { index: 0, completed: [] } };
-  const catalog = () => track === 'bonus' ? bonus : steps;
+  const catalog = () => track === 'bonus' ? getVariant(variant).bonus : getVariant(variant).steps;
   const messages = [];
-  const data = () => ({ type: 'state', track, step: catalog()[state.index], notes: notes[catalog()[state.index].id] || [], steps: catalog().map(x => ({ id: x.id, title: x.title, module: x.module, group: x.group, step: x.step, part: x.part })), state, project: 'D:\\Latihan\\pesanmakan', pending, busy: false });
+  const data = () => ({ type: 'state', track, variant, step: catalog()[state.index], notes: getVariant(variant).notes[catalog()[state.index].id] || [], steps: catalog().map(x => ({ id: x.id, title: x.title, module: x.module, group: x.group, step: x.step, part: x.part })), state, project: 'D:\\Latihan\\pesanmakan', pending, busy: false });
   await page.exposeFunction('hostMessage', async message => {
     messages.push(message);
+    if (message.type === 'variant') {
+      variantProgress[variant] = state; variant = message.variant;
+      state = variantProgress[variant] || { index: 0, completed: [] }; pending = false;
+    }
     if (message.type === 'track') { progress[track] = state; track = message.track; state = progress[track]; pending = false; }
     if (message.type === 'jump') state.index = message.index;
     if (message.type === 'next') state = advance(state, catalog().length);
@@ -171,6 +178,23 @@ const server = http.createServer((req, res) => {
   await page.reload();
   await page.waitForFunction(() => document.getElementById('title').textContent.includes('orders'));
   await page.screenshot({ path: path.join(output, 'ui-light.png'), fullPage: true });
+  const originalIndex = state.index;
+  for (const id of ['laundry', 'pesantiketfilm', 'perpustakaan']) {
+    await page.locator('#variant').selectOption(id);
+    await page.waitForFunction(id => document.getElementById('code').textContent.endsWith(id), id);
+    assert.equal(await page.locator('#progress').getAttribute('max'), '55');
+    assert.equal(await page.locator('#search').inputValue(), '');
+    for (const index of [4, 18, 43, 47, 50, 54]) {
+      state.index = index;
+      await page.evaluate(data => window.postMessage(data, '*'), data());
+      const expected = getVariant(id).steps[index];
+      await page.waitForFunction(code => document.getElementById('code').textContent === code, expected.code);
+      assert.equal(await page.locator('#target').textContent(), expected.mode === 'terminal' ? 'Terminal VS Code · folder kerja yang dipilih' : expected.target);
+    }
+    await page.screenshot({ path: path.join(output, `variasi-${id}.png`), fullPage: true });
+  }
+  await page.locator('#variant').selectOption('pesanmakan');
+  await page.waitForFunction(index => document.getElementById('position').textContent === `Posisi ${index + 1} dari 55`, originalIndex);
   for (const expected of ['terminal', 'copy', 'code', 'project', 'next', 'previous', 'jump', 'open', 'preview', 'cancel', 'apply', 'source', 'reset']) assert.ok(messages.some(x => x.type === expected), expected);
   assert.deepEqual(errors, []);
   fs.writeFileSync(path.join(output, 'ui-report.json'), JSON.stringify({ ok: true, all55CodeBlocksExact: true, selectiveExplanations: true, explanationLineNavigation: true, buttonsChecked: 13, bonusTheories: 4, bonusExercises: 4, exerciseQuestionStepsAndAnswer: true, allBonusBlocksExact: true, bonusNavigationAndCopy: true, mainProgressPreserved: true, moduleFilters: ['all', 0, 1, 2, 3, 4], combinedSearch: true, filterPersistence: true, clearFilters: true, mapSearchAndEmptyState: true, widths: [260, 360, 700], themes: ['dark', 'light'], consoleErrors: errors }, null, 2));

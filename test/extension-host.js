@@ -10,8 +10,9 @@ async function run() {
   const api = await extension.activate();
   assert.equal(api.steps.length, 55);
   const guide = api.guide;
+  await guide.receive({ type: 'variant', variant: 'pesanmakan' });
   await guide.receive({ type: 'track', track: 'main' });
-  const root = vscode.Uri.file(process.env.SERKOM_TEST_PROJECT);
+  const root = vscode.Uri.file(path.join(process.env.SERKOM_TEST_PROJECT, 'run-' + Date.now()));
   await vscode.workspace.fs.createDirectory(root);
   guide.root = root.toString();
   const step = api.steps.find(x => x.id === 'modul2-4-2-foodcontroller');
@@ -92,6 +93,44 @@ async function run() {
   await assert.rejects(() => guide.bonusBlock({ type: 'bonusCopy', lessonId: 'wrong', block: blockIndex }), /Buka ulang/);
   await assert.rejects(() => guide.prepareEdit(), /diterapkan manual/);
   await guide.receive({ type: 'track', track: 'main' });
+  const preservedMain = guide.state;
+  for (const variant of ['laundry', 'pesantiketfilm', 'perpustakaan']) {
+    await guide.receive({ type: 'variant', variant });
+    assert.equal(guide.catalog.length, 55);
+    assert.equal(guide.state.index, 0, 'each variant starts independently');
+    assert.ok(guide.step.code.endsWith(variant));
+    await guide.next();
+    const variantState = guide.state;
+    await guide.receive({ type: 'variant', variant: 'pesanmakan' });
+    assert.deepEqual(guide.state, preservedMain);
+    await guide.receive({ type: 'variant', variant });
+    assert.deepEqual(guide.state, variantState);
+    const reconstructed = new (require('../src/extension').Guide)(guide.context);
+    assert.equal(reconstructed.variant, variant);
+    const step = guide.catalog.find(step => step.id === 'modul2-4-2-foodcontroller');
+    await guide.save({ index: step.index, completed: [] });
+    const target = vscode.Uri.joinPath(root, step.target);
+    await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(target, '..'));
+    const model = guide.material.model;
+    await vscode.workspace.fs.writeFile(target, Buffer.from(`<?php\nclass ${model}Controller {\n    public function index() { return 'old'; }\n}\n`));
+    const editor = await guide.openTarget();
+    await guide.prepareEdit();
+    assert.ok(guide.pending);
+    await guide.receive({ type: 'variant', variant: 'pesanmakan' });
+    assert.equal(guide.pending, null, 'switching variant discards pending edit');
+    await assert.rejects(() => guide.applyEdit(), /pratinjau/);
+    await guide.receive({ type: 'variant', variant });
+    await guide.prepareEdit();
+    await guide.applyEdit();
+    assert.ok(editor.document.getText().includes(`= ${model}::latest()->paginate(10);`));
+    await editor.document.save();
+    await guide.receive({ type: 'track', track: 'bonus' });
+    assert.equal(guide.state.index, 0, 'bonus starts independently for this variant');
+    await guide.next();
+    await guide.receive({ type: 'track', track: 'main' });
+    assert.equal(guide.state.index, step.index);
+    await guide.receive({ type: 'variant', variant: 'pesanmakan' });
+  }
   fs.writeFileSync(process.env.SERKOM_HOST_REPORT, JSON.stringify({ ok: true, steps: 55, bonusTheories: 4, bonusExercises: 4, actualVSCodeHost: true, previewNonMutating: true, applyCorrect: true, stalePreviewBlocked: true, progressIsolated: true, explanationLineNavigation: true, clipboardCodeExact: true, bonusProgressIndependent: true, bonusCopyExact: true, bonusRejectsAutomaticEdits: true }, null, 2));
 }
 module.exports = { run };

@@ -11,6 +11,7 @@ for (const [id, action] of Object.entries({ project: 'project', open: 'open', te
 }
 el('mainTrack').addEventListener('click', () => vscode.postMessage({ type: 'track', track: 'main' }));
 el('bonusTrack').addEventListener('click', () => vscode.postMessage({ type: 'track', track: 'bonus' }));
+el('variant').addEventListener('change', () => vscode.postMessage({ type: 'variant', variant: el('variant').value }));
 el('mapToggle').addEventListener('click', () => {
   const open = el('map').hidden;
   el('map').hidden = !open;
@@ -115,12 +116,18 @@ window.addEventListener('message', event => {
   }
   if (data.type !== 'state') return;
   const previousTrack = current?.track || 'main';
+  const variantChanged = current && current.variant !== data.variant;
   const isBonus = data.track === 'bonus';
+  if (variantChanged) { el('search').value = ''; savedFilters.query = ''; savedFilters.bonusQuery = ''; vscode.setState(savedFilters); el('notice').hidden = true; el('bonusNotice').hidden = true; }
   if (previousTrack !== (data.track || 'main')) {
     el('search').value = (isBonus ? savedFilters.bonusQuery : savedFilters.query) || '';
     el('notice').hidden = true; el('bonusNotice').hidden = true;
   }
   current = data;
+  el('variant').value = data.variant || 'pesanmakan';
+  el('variant').disabled = !!data.busy;
+  if (data.moduleLabels) Array.from(el('moduleFilter').options).forEach((option, index) => { option.textContent = data.moduleLabels[index]; });
+  el('search').placeholder = data.searchPlaceholder || 'Contoh: FoodController, modul 2';
   const { step, state, steps, busy } = data;
   el('lesson').setAttribute('aria-busy', String(busy));
   el('projectName').textContent = data.project ? data.project.replace(/[\\/]+$/, '').split(/[\\/]/).pop() : 'Pilih folder proyek';
@@ -163,7 +170,7 @@ window.addEventListener('message', event => {
   el('completed').hidden = !state.completed.includes(state.index);
   const next = steps[state.index + 1];
   el('nextTitle').textContent = next ? next.title : 'Materi selesai. Jalankan dan uji aplikasi.';
-  el('nextTarget').textContent = next ? next.id : 'Uji katalog → checkout → login admin → CRUD menu → status pesanan.';
+  el('nextTarget').textContent = next ? next.id : data.finalHint || 'Uji katalog → checkout → login admin → CRUD menu → status pesanan.';
   document.querySelectorAll('button').forEach(button => { button.disabled = busy; });
   el('previous').disabled = busy || state.index === 0;
   el('next').textContent = state.index === steps.length - 1 ? 'Tandai materi selesai' : 'Selesai, lanjut';

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 (lokal)
+
+- Tambah variasi laundry baju, pesan tiket film, dan perpustakaan dari 55 langkah pesanmakan.
+- Pilihan variasi dalam panel yang sama, beserta bonus, penjelasan, salin kode, dan pratinjau edit.
+- Progres terpisah per variasi; progres pesanmakan versi sebelumnya dipertahankan.
+- CSS, engine penyisipan, command VS Code, dan sumber pesanmakan tetap sama.
+- Verifikasi dokumen/kode, command/flag, kelas tampilan, perpindahan variasi, dan penerapan edit di VS Code.
+
 ## 1.2.1
 
 - Bonus mengikuti kisi-kisi tepat 4 bagian teori dan 4 soal latihan.

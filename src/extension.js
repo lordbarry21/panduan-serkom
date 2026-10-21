@@ -4,8 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const steps = require('../data/steps.json');
-const notes = require('../data/notes.json');
-const bonus = require('../data/bonus.json');
+const { definitions, getVariant } = require('./variants');
 const { boundedIndex, advance, planEdit, methodBounds, bonusProgress } = require('./engine');
 
 class Guide {
@@ -17,11 +16,13 @@ class Guide {
     this.onDidChange = this.emitter.event;
     this.pending = null;
     this.busy = false;
+    this.variant = getVariant(context.workspaceState.get('selectedVariant')).id;
     this.track = context.workspaceState.get('selectedTrack') === 'bonus' ? 'bonus' : 'main';
     context.subscriptions.push(this.emitter);
   }
-  get catalog() { return this.track === 'bonus' ? bonus : steps; }
-  get key() { return 'progress:' + (this.root || 'no-project') + (this.track === 'bonus' ? ':bonus' : ''); }
+  get material() { return getVariant(this.variant); }
+  get catalog() { return this.track === 'bonus' ? this.material.bonus : this.material.steps; }
+  get key() { return 'progress:' + (this.root || 'no-project') + (this.variant === 'pesanmakan' ? '' : ':' + this.variant) + (this.track === 'bonus' ? ':bonus' : ''); }
   get state() {
     const stored = this.context.workspaceState.get(this.key, { index: 0, completed: [] });
     const saved = this.track === 'bonus' ? bonusProgress(stored) : stored;
@@ -42,7 +43,7 @@ class Guide {
   }
   async render() {
     if (!this.view) return;
-    await this.view.webview.postMessage({ type: 'state', track: this.track, step: this.step, notes: notes[this.step.id] || [], steps: this.catalog.map(x => ({ id: x.id, title: x.title, module: x.module, group: x.group, step: x.step, part: x.part })), state: this.state, project: this.root ? vscode.Uri.parse(this.root).fsPath : '', pending: !!this.pending, busy: this.busy });
+    await this.view.webview.postMessage({ type: 'state', track: this.track, variant: this.variant, variants: definitions.map(({ id, label }) => ({ id, label })), moduleLabels: ['Semua modul', 'Persiapan', 'Modul 1 · Database dan model', this.material.rename('Modul 2 · Login dan CRUD menu'), this.material.rename('Modul 3 · Pemesanan pelanggan'), 'Modul 4 · Dashboard dan route'], searchPlaceholder: this.material.rename('Contoh: FoodController, modul 2'), finalHint: this.material.rename('Uji katalog → checkout → login admin → CRUD menu → status pesanan.'), step: this.step, notes: this.material.notes[this.step.id] || [], steps: this.catalog.map(x => ({ id: x.id, title: x.title, module: x.module, group: x.group, step: x.step, part: x.part })), state: this.state, project: this.root ? vscode.Uri.parse(this.root).fsPath : '', pending: !!this.pending, busy: this.busy });
   }
   resolveWebviewView(view) {
     this.view = view;
@@ -62,6 +63,12 @@ class Guide {
     this.busy = true; await this.render();
     try {
       switch (message.type) {
+        case 'variant':
+          if (definitions.some(item => item.id === message.variant)) {
+            this.variant = message.variant; this.pending = null;
+            await this.context.workspaceState.update('selectedVariant', this.variant);
+          }
+          break;
         case 'track':
           if (message.track === 'main' || message.track === 'bonus') {
             this.track = message.track; this.pending = null;
@@ -86,7 +93,7 @@ class Guide {
         case 'apply': await this.applyEdit(); break;
         case 'cancel': this.pending = null; break;
         case 'terminal': await this.openTerminal(); break;
-        case 'source': await vscode.window.showTextDocument(vscode.Uri.joinPath(this.context.extensionUri, this.track === 'bonus' ? 'data/bonus-kisi-kisi.md' : 'data/pesanmakan.md'), { preview: true, viewColumn: vscode.ViewColumn.One }); break;
+        case 'source': await vscode.window.showTextDocument(vscode.Uri.joinPath(this.context.extensionUri, this.track === 'bonus' ? this.material.bonusSource : this.material.source), { preview: true, viewColumn: vscode.ViewColumn.One }); break;
         case 'reset': {
           const answer = await vscode.window.showWarningMessage('Ulangi progres panduan proyek ini? File proyek tidak diubah.', { modal: true }, 'Ulangi progres');
           if (answer) await this.save({ index: 0, completed: [] });

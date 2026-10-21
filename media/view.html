@@ -11,6 +11,13 @@
   <header>
     <div class="heading"><strong>Panduan Serkom</strong><button id="mapToggle" aria-expanded="false" aria-controls="map">Lihat alur</button></div>
     <p class="sub">Satu langkah dulu. Lanjut saat sudah paham.</p>
+    <label for="variant">Pilih variasi proyek</label>
+    <select id="variant" aria-label="Pilih variasi proyek">
+      <option value="pesanmakan">Pesan makan</option>
+      <option value="laundry">Laundry baju</option>
+      <option value="pesantiketfilm">Pesan tiket film</option>
+      <option value="perpustakaan">Perpustakaan</option>
+    </select>
     <nav class="track-tabs" aria-label="Pilih materi"><button id="mainTrack" aria-pressed="true">Materi utama</button><button id="bonusTrack" aria-pressed="false">Bonus kisi-kisi</button></nav>
     <button id="project" class="project" title="Pilih folder proyek Laravel"><span>Folder kerja</span><strong id="projectName">Pilih folder proyek</strong></button>
     <div class="progress-line"><span id="position">Memuat materi…</span><span id="count"></span></div>

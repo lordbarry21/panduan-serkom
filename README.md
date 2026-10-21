@@ -2,6 +2,10 @@
 
 Pendamping belajar Laravel di dalam Visual Studio Code. Ikuti 55 langkah dari persiapan sampai database, login, CRUD menu, pemesanan pelanggan, dashboard, dan route.
 
+Versi lokal **1.3.0** menambahkan pilihan **Pesan makan**, **Laundry baju**, **Pesan tiket film**, dan **Perpustakaan** di dropdown **Pilih variasi proyek**. Tiap variasi mengikuti 55 langkah dan bonus yang sama. Command beserta flag, struktur kode, kelas tampilan, dan urutan pengerjaan mengikuti pesanmakan; nama proyek, model, tabel, kategori, data contoh, dan label disesuaikan. CSS panel dan mesin penyisipan tetap sama. Progres materi utama dan bonus dipisahkan per variasi dan folder, serta progres pesanmakan sebelumnya tetap terbaca.
+
+Untuk memasang hasil build lokal, jalankan `code --install-extension .\dist\panduan-serkom-1.3.0.vsix --force`. Buka **Serkom: Buka Panduan** atau **Ctrl+Alt+Shift+S**, lalu pilih variasi. Bila panel versi lama masih terbuka, jalankan **Developer: Reload Window** sekali. Paket 1.3.0 ini dibuat lokal; petunjuk rilis GitHub di bawah merujuk rilis upstream.
+
 Setiap langkah menunjukkan **file tujuan → lokasi kode → tujuan langkah → kode asli → langkah berikutnya**. Progres disimpan per folder proyek dalam workspace VS Code yang digunakan.
 
 ## Instalasi di Visual Studio Code
@@ -111,6 +115,8 @@ Status selesai adalah penanda belajar yang dipilih pengguna, bukan hasil penguji
 [`data/pesanmakan.md`](data/pesanmakan.md) adalah salinan sumber byte demi byte. [`data/steps.json`](data/steps.json) memetakan 55 potongan ke rentang baris sumber. Seluruh kode, komentar, dan isi teks dipertahankan; empat spasi pembungkus blok Markdown dilepas untuk tampilan dan papan klip. Penyisipan di dalam method/class menyesuaikan indentasi luar tanpa mengubah statement kode. Petunjuk dan catatan ekstensi tidak dimasukkan ke kode latihan.
 
 Materi asli menggunakan `price` di migration `order_details`, tetapi `subtotal` pada checkout/dashboard. Perbedaan itu dipertahankan sesuai sumber dan diberi catatan pada langkah terkait. Ekstensi ini tidak menjamin aplikasi Laravel hasil materi bebas kesalahan. Command `migrate:fresh --seed` menghapus data pada database yang dipilih; gunakan database latihan.
+
+Variasi juga mempertahankan perilaku sumber tersebut. Perpustakaan menggunakan alur katalog → pilih jumlah → konfirmasi → dashboard status yang sama; tidak menambah fitur tanggal jatuh tempo atau stok. Laundry dan tiket film juga mengikuti form serta validasi sumber. `src/variants.js` menyimpan kamus penggantian nama; `npm run variants:build` membangun materi lengkap di `data/variants/` tanpa mengubah sumber asli.
 
 ## Mengembangkan dari source
 
